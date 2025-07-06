@@ -1,11 +1,11 @@
 # Iniciando a realizar metaprompting para aterrizar las ideas
 Vamos a iniciar utilizando Chat GPT (free plan) en el navegador
-## Prompt 1:
+## Prompt 1: Chat GPT
 Quiero hacer un juego, pero desconozco cual es el nombre que ayudaría para que un asistente de código pueda ayudarme a crearlo más facilmente:
 El juego consiste en que vienen olas de mob/enemigos y entre medio aparecen cosas que te van dando bonificaciones para que tu personaje pueda pegar más fuerte, se mueva más rapido, entre otras mejoras que pudieran existir, cada cierta cantidad de rondas, aparecería un enemigo que debes derrotar, y así continuar hasta que se te acabe la vida.
 Como se llaman este tipo de juegos?
 
-## Prompt 2:
+## Prompt 2: Chat GPT
 Actua como arquitecto, para crear un video juego con la dinámica "wave survival action game"
 # Características Tecnologías
 * HTML
@@ -107,3 +107,38 @@ Los enemigos normales tiene las siguientes condiciones:
 * Hazme las preguntas que consideres para implementar el juego, y cosas que no haya incluido en la definición inicial
 * Definir el plan de implementación del juego
 * Entregarme los prompt para que un asistente especializado en códificar lo ejecute
+
+## Respuesta 2: Chat GPT
+🔍 Preguntas Clave Antes de Implementar
+Antes de pasar a un plan detallado, estas son preguntas necesarias que debemos resolver:
+
+🎮 Juego y Jugabilidad
+1. Movimiento enemigo: ¿deben aparecer todos los enemigos de la oleada a la vez, o uno cada cierto tiempo?
+2. Daño enemigo: ¿el enemigo ataca automáticamente al estar en rango, o necesita un “turno” o intervalo entre ataques?
+3. Colisiones: cuando presionas espacio para atacar, ¿haces daño a todos los enemigos en la misma columna, o solo al más cercano?
+4. Buffs: ¿pueden acumularse varios buffs a la vez?
+5. Jefes: ¿tienen alguna mecánica especial (p.ej., disparar, moverse más rápido) o se comportan igual que enemigos normales?
+6. Sprites e imágenes: ¿quieres placeholders (colores) para la primera versión o imágenes reales de ejemplo?
+7. Responsive: ¿debe escalar para móviles o nos enfocamos en escritorio?
+8. Velocidad del juego: ¿prefieres que se base en requestAnimationFrame (fluido) o timers fijos (más simple)?
+9. Puntajes: ¿nombre del jugador en cada partida, o se asocia al personaje seleccionado?
+10. ¿Quieres sonido? (efecto de ataque, victoria, derrota)
+
+Si me respondes estas preguntas, afinamos aún más el plan.
+
+
+## Prompt 3: Chat GPT
+La respuesta a tus preguntas son estas:
+1. Los enemigos deben aparecer uno cada cierto tiempo, este tiempo será 1 por segundo.
+2. El intervalor de ataque es el que definimos como [enemy_speed_value], el comportamiento esperado, es que al aparecer un enemigo, espera el tiempo de su velocidad, y debe determinar si moverse una casilla o atacar, esto dependerá si está en rango o no.
+3. Al apretar espacio, se hace daño solo al enemigo más cercano, si hubiera 2 enemigos en la misma posición, que elija a cualquiera de ellos, por lo que podría darse un un ataque golpee a uno y el siguiente golpee al otro, eso no sería problema.
+4. Si, los buffs pueden acumularse, y su efecto es permanente
+5. Los jefes tienen la diferencia que tienen un rango de ataque mayor y que tienen más puntos de salud que un enemigo normal, fuera de eso no hay diferencia
+6. Iniciemos con placeholders inicialmente, despues los cambiaremos por las imágenes definitivas.
+7. Que sea responsive, y se escale en móviles
+8. Para la velocidad usar timers, la base serían 1 segundo cada tick
+9. Nombre del jugador en cada partida
+10. Si sería bueno incluir sonidos ante los eventos que indicas.
+
+# Respuesta 3: Chat GPT
+Entregó el plan de implementación y los prompt para lograrlo
