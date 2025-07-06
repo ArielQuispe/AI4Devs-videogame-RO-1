@@ -82,3 +82,52 @@ Ahora las acciones del menú principal están funcionando, ya que veo los mensaj
 ```
 El juego sigue sin funcionar al momento de iniciar una partida nueva, no se ve ninguna cosa, que pasa?
 ```
+
+# Prompt 7
+```
+El cambio que hiciste logró que se hicieran circulos, pero realmente no está funcionando como se debería. Te explico nuevamente el comportamiento esperado para que hagas los ajuste:
+# Tablero
+* La pantalla de juego es una grilla de 5 x 15, en dispocisión vertical, las cuales tendrán una coordinada x,y, donde 0,0 es la esquina superior izquierda y 5,14 es la esquina inferior derecha, esto lo llamaremos tablero
+* Se llamará columna a las coordenadas x, es decir, tendremos 5 columnas en total, la columna más a la izquierda es 0 y la columna más a la derecha es 4
+* Se llamará fila a las coordenadas y, es decir, tendremos 15 filas en total, la fila más arriba es 0 y la fila más abajo es 14
+# Personaje o jugador
+* El personaje solo puede estar en las casillas con fila 14, es decir las casillas inferiores, y debe ser capaz de moverse una a una, al apretar las teclas izquierda o derecha del teclado, nunca puede moverse hacia arriba, ni abajo (porque saldría del tablero)
+* El personaje puede dañar a cualquier enemigo (normal o jefe) en la misma columna. El daño se realiza cuando el usuario presiona la tecla espacio en el teclado. El daño que hace es [character_damage_value].
+* El personaje tiene puntos de salud, que indica cuantos ataques puede recibir. Cuando sus puntos de salud lleguen a 0, el juego se acaba. Los puntos de saluda son [character_hp_value]
+* Para las pruebas el personaje tendra color azul
+# Enemigos
+* Los enemigos pueden hacer daño al jugador [enemy_damage_value], siempre y cuando se encuentre en la fila de su rango de ataque
+* Los enemigos tienen puntos de salud [enemy_hp_value], al llegar a cero, estos desaparecen del tablero, y no pueden continuar atacando ni acercandose al jugador
+* Los enemigos tienen una velocidad, es decir, se acercan una casilla hacia el jugador por cada [enemy_speed_value] segundos
+* Los enemigos tienen un rango de ataque [enemy_range_value], que indica la cantidad de filas que debe tener de diferencia para poder hacer daño, sin considerar en que columna del tablero se encuentren
+* Los enemigos al morir, le dan un puntaje [enemy_score_value] al jugador que se suma al puntaje acumulado.
+* Si un enemigo está en rango de ataque, no debe continuar avanzando hacia el jugador
+* Para las pruebas el enemigo tendra color rojo
+## Enemigos normales
+Los enemigos normales tiene las siguientes condiciones:
+* [enemy_damage_value] = 2
+* [enemy_hp_value] = 3
+* [enemy_speed_value] = 2
+* [enemy_range_value] = 1
+* [enemy_score_value] = 1
+* Aparecen en las oleadas que no sean multiplos de 20
+## Enemigos Jefe
+* [enemy_damage_value] = 4
+* [enemy_hp_value] = 20
+* [enemy_speed_value] = 2
+* [enemy_range_value] = 3
+* [enemy_score_value] = 10
+* Aparecen en las oleadas que sean multiplos de 20
+# Oleadas
+* Las oleadas indican un objetivo inmediato que el jugador debe cumplir, que es matar todos los enemigos presentes en el tablero, para que inicie la siguiente oleada
+* Las oleadas inician en 1, y cada vez que se completa, se inicia la siguiente oleada
+* Las oleadas normales (no son multiplo de 20), deben generar el [número de la oleada + 1] enemigos normales, que inician en la parte superior del tablero, y comienzan a bajar hacia el jugador
+* Las oleadas jefes (son multiplo de 20), deben generar el [número de la oleada /20 + 1] enemigos jefe, que inician en la parte superior del tablero, y comienzan a bajar hacia el jugador
+# Jugabilidad
+* El juego inicia con la oleada 1
+* Cada vez que el jugador elimina a un enemigo, gana su puntaje, y lo va acumulando
+* Si el jugador elimina a todos los enemigos en el tablero, inicia la siguiente oleada
+* Si el jugador pierde todos sus puntos de vida, es decir [character_hp_value] es igual a 0, el juego se da por terminado
+* Cuando el juego a terminado, si su puntaje está dentro de los 10 mejores registrados, se registra en los mejores puntajes
+* Cuando el juego a terminado, el juego vuelve al menu inicial
+```

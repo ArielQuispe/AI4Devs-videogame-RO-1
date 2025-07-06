@@ -98,7 +98,31 @@ function saveScore() {
     localStorage.setItem('scores', JSON.stringify(scores));
 }
 
-// Render the game area
+// Handle player movement
+function handlePlayerMovement(event) {
+    if (event.key === 'ArrowLeft' && player.position > 0) {
+        player.position--;
+    } else if (event.key === 'ArrowRight' && player.position < 4) {
+        player.position++;
+    }
+    renderGameArea();
+}
+
+// Handle player attack
+function handlePlayerAttack(event) {
+    if (event.key === ' ') {
+        attackEnemies();
+        renderGameArea();
+    }
+}
+
+// Attach event listeners for player controls
+document.addEventListener('keydown', (event) => {
+    handlePlayerMovement(event);
+    handlePlayerAttack(event);
+});
+
+// Update renderGameArea to position elements in the grid
 function renderGameArea() {
     const gameArea = document.getElementById('gameArea');
     gameArea.innerHTML = ''; // Clear previous content
@@ -115,7 +139,7 @@ function renderGameArea() {
         const enemyElement = document.createElement('div');
         enemyElement.className = enemy.isBoss ? 'enemy boss' : 'enemy';
         enemyElement.style.gridColumnStart = enemy.position + 1;
-        enemyElement.style.gridRowStart = 1; // Enemies start at the top
+        enemyElement.style.gridRowStart = enemy.row + 1;
         gameArea.appendChild(enemyElement);
     });
 
@@ -124,7 +148,7 @@ function renderGameArea() {
         const buffElement = document.createElement('div');
         buffElement.className = `buff ${buff.type}`;
         buffElement.style.gridColumnStart = buff.position + 1;
-        buffElement.style.gridRowStart = Math.floor(Math.random() * 14) + 1; // Random row
+        buffElement.style.gridRowStart = buff.row + 1;
         gameArea.appendChild(buffElement);
     });
 }
