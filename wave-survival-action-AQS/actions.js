@@ -99,6 +99,35 @@ function saveScore() {
 
 // Start the game
 document.addEventListener('DOMContentLoaded', () => {
-    initGame();
-    // Add event listeners for player actions (e.g., key presses)
+    const startGameButton = document.getElementById('startGame');
+    const viewScoresButton = document.getElementById('viewScores');
+    const backToMenuButton = document.getElementById('backToMenu');
+    const menu = document.getElementById('menu');
+    const gameArea = document.getElementById('gameArea');
+    const scoreboard = document.getElementById('scoreboard');
+
+    // Evento para iniciar un nuevo juego
+    startGameButton.addEventListener('click', () => {
+        menu.classList.add('d-none');
+        gameArea.classList.remove('d-none');
+        // Aquí se puede inicializar la lógica del juego
+        console.log('Juego iniciado');
+        initGame();
+    });
+
+    // Evento para ver los puntajes
+    viewScoresButton.addEventListener('click', () => {
+        menu.classList.add('d-none');
+        scoreboard.classList.remove('d-none');
+        // Aquí se puede cargar y mostrar los puntajes
+        console.log('Mostrando puntajes');
+    });
+
+    // Evento para volver al menú principal
+    backToMenuButton.addEventListener('click', () => {
+        scoreboard.classList.add('d-none');
+        gameArea.classList.add('d-none');
+        menu.classList.remove('d-none');
+        console.log('Volviendo al menú principal');
+    });
 });

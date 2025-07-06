@@ -67,3 +67,8 @@ El error que genera ahora es diferente, pero sigue sin funcionar:
 index.html:1 Failed to find a valid digest in the 'integrity' attribute for resource 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' with computed SHA-384 integrity '9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM'. The resource has been blocked.
 Corrige este error
 ```
+
+# Prompt 4
+```
+La aplicación inicia sin problemas, sin embargo solo se muestra menú inicial, ninguno de los dos botones genera ninguna acción, que está pasando?
+```
