@@ -172,3 +172,10 @@ En actions.js:
 - Crea una función initTablero() que genere el tablero 5 columnas x 15 filas como divs o grid.
 - Cada celda con id="celda-x-y".
 - Inicializa la posición del jugador en la fila 14, columna 2 (centro).
+
+## Prompt 6: Copilot VSC
+En actions.js:
+- Crea listeners para:
+   - Flecha izquierda: mover columna -1 (mínimo 0).
+   - Flecha derecha: mover columna +1 (máximo 4).
+   - Espacio: atacar enemigo más cercano en la misma columna.
