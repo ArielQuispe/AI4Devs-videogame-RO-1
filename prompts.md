@@ -142,3 +142,27 @@ La respuesta a tus preguntas son estas:
 
 # Respuesta 3: Chat GPT
 Entregó el plan de implementación y los prompt para lograrlo
+
+# Prompt 4: Copilot VSC
+Crea index.html con Bootstrap 5 y las siguientes vistas en divs:
+
+1. Menú principal (id="pantalla-menu"):
+   - Botón iniciar juego nuevo
+   - Botón ver puntajes
+
+2. Pantalla selección personaje (id="pantalla-seleccion"):
+   - Selector personaje (por ahora dropdown)
+   - Campo nombre
+   - Botón iniciar juego
+
+3. Pantalla juego (id="pantalla-juego"):
+   - Contenedor tablero 5x15
+   - Indicador salud jugador
+   - Indicador puntaje
+   - Indicador oleada
+
+4. Pantalla puntajes (id="pantalla-puntajes"):
+   - Tabla Top 10
+   - Botón volver al menú
+
+Incluye links a Bootstrap, style.css, actions.js, values.js.
