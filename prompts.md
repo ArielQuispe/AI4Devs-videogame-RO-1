@@ -192,3 +192,16 @@ En actions.js:
 - Usa setInterval para tickJuego.
 
 ## Prompt 8: Copilot VSC
+En actions.js:
+- Crea funciones:
+   - cargarPuntajes(): obtiene top 10 de localStorage.
+   - guardarPuntaje(nombre, score): inserta puntaje ordenado.
+   - mostrarPuntajes(): muestra tabla.
+
+## Prompt 9: Copilot VSC
+Integra sonidos usando new Audio():
+- Sonido ataque jugador.
+- Sonido ataque enemigo.
+- Sonido eliminar enemigo.
+- Sonido recoger buff.
+- Sonido game over.

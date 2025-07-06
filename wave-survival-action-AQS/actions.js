@@ -54,6 +54,38 @@ function moverJugador(direccion) {
     }
 }
 
+// Cargar sonidos
+const sonidoAtaqueJugador = new Audio('sounds/ataque-jugador.wav');
+const sonidoAtaqueEnemigo = new Audio('sounds/ataque-enemigo.mp3');
+const sonidoEliminarEnemigo = new Audio('sounds/eliminar-enemigo.wav');
+const sonidoRecogerBuff = new Audio('sounds/recoger-buff.wav');
+const sonidoGameOver = new Audio('sounds/game-over.wav');
+
+// Función para reproducir sonido de ataque del jugador
+function reproducirSonidoAtaqueJugador() {
+    sonidoAtaqueJugador.play();
+}
+
+// Función para reproducir sonido de ataque del enemigo
+function reproducirSonidoAtaqueEnemigo() {
+    sonidoAtaqueEnemigo.play();
+}
+
+// Función para reproducir sonido al eliminar un enemigo
+function reproducirSonidoEliminarEnemigo() {
+    sonidoEliminarEnemigo.play();
+}
+
+// Función para reproducir sonido al recoger un buff
+function reproducirSonidoRecogerBuff() {
+    sonidoRecogerBuff.play();
+}
+
+// Función para reproducir sonido de game over
+function reproducirSonidoGameOver() {
+    sonidoGameOver.play();
+}
+
 // Función para atacar al enemigo más cercano en la misma columna
 function atacarEnemigo() {
     for (let fila = jugadorFila - 1; fila >= 0; fila--) {
@@ -61,10 +93,12 @@ function atacarEnemigo() {
         if (celda && celda.classList.contains('enemigo')) {
             celda.classList.remove('enemigo');
             celda.style.backgroundColor = '';
+            reproducirSonidoEliminarEnemigo();
             console.log('Enemigo atacado en fila:', fila, 'columna:', jugadorColumna);
             break;
         }
     }
+    reproducirSonidoAtaqueJugador();
 }
 
 // Función para generar una oleada de enemigos y buffs
@@ -113,6 +147,7 @@ function tickJuego() {
                         nuevaCelda.style.backgroundColor = 'red';
                     }
                 } else {
+                    reproducirSonidoGameOver();
                     console.log('El enemigo alcanzó al jugador. Fin del juego.');
                     clearInterval(intervaloJuego);
                 }
