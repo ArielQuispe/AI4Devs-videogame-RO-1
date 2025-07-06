@@ -77,3 +77,8 @@ La aplicación inicia sin problemas, sin embargo solo se muestra menú inicial, 
 ```
 Ahora las acciones del menú principal están funcionando, ya que veo los mensajes de consola cuando hago click en ellos, sin embargo al inicial el juego la ventana no muestra nada, que está pasando?
 ```
+
+# Prompt 6
+```
+El juego sigue sin funcionar al momento de iniciar una partida nueva, no se ve ninguna cosa, que pasa?
+```

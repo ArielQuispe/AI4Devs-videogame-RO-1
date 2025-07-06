@@ -44,10 +44,33 @@ h1, h2, h3 {
     transform: translateX(-50%); /* Adjust for centering */
 }
 
+.player {
+    width: 40px;
+    height: 40px;
+    background-color: blue;
+    position: absolute;
+    border-radius: 50%;
+}
+
 .enemy {
-    position: absolute; /* Absolute positioning for enemies */
+    width: 40px;
+    height: 40px;
+    background-color: red;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.enemy.boss {
+    width: 60px;
+    height: 60px;
+    background-color: darkred;
+    border: 3px solid black;
 }
 
 .buff {
-    position: absolute; /* Absolute positioning for buffs */
+    width: 30px;
+    height: 30px;
+    background-color: green;
+    position: absolute;
+    border-radius: 50%;
 }
