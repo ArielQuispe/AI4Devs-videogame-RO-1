@@ -52,3 +52,11 @@ wave-survival-action-AQS/
 * Definir el plan de implementación del juego
 * Ejecutar el plan de implementación
 ```
+
+# Prompt 2
+```
+Al querer revisar el juego me arroja este error en el navegador:
+bootstrap.min.css:1  Failed to load resource: the server responded with a status of 404 ()
+bootstrap.min.css:1  Failed to load resource: the server responded with a status of 404 ()
+Corrige este error
+```
