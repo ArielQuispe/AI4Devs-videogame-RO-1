@@ -179,3 +179,14 @@ En actions.js:
    - Flecha izquierda: mover columna -1 (mínimo 0).
    - Flecha derecha: mover columna +1 (máximo 4).
    - Espacio: atacar enemigo más cercano en la misma columna.
+
+## Prompt 7: Copilot VSC
+En actions.js:
+- Crea funciones:
+   - generarOleada(oleadaNumero): genera enemigos y buffs según reglas.
+   - tickJuego(): ejecutado cada segundo:
+       - Mueve enemigos.
+       - Realiza ataques enemigos.
+       - Mueve buffs.
+       - Verifica condiciones de final de oleada o juego.
+- Usa setInterval para tickJuego.

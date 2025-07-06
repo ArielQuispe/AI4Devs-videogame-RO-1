@@ -67,6 +67,71 @@ function atacarEnemigo() {
     }
 }
 
+// Función para generar una oleada de enemigos y buffs
+function generarOleada(oleadaNumero) {
+    const tablero = document.getElementById('tablero');
+
+    // Generar enemigos
+    for (let i = 0; i < oleadaNumero + 3; i++) { // Más enemigos con cada oleada
+        const fila = Math.floor(Math.random() * 5);
+        const columna = Math.floor(Math.random() * 5);
+        const celda = document.getElementById(`celda-${fila}-${columna}`);
+        if (celda && !celda.classList.contains('enemigo')) {
+            celda.classList.add('enemigo');
+            celda.style.backgroundColor = 'red';
+        }
+    }
+
+    // Generar buffs
+    for (let i = 0; i < 2; i++) { // Dos buffs por oleada
+        const fila = Math.floor(Math.random() * 5);
+        const columna = Math.floor(Math.random() * 5);
+        const celda = document.getElementById(`celda-${fila}-${columna}`);
+        if (celda && !celda.classList.contains('enemigo') && !celda.classList.contains('buff')) {
+            celda.classList.add('buff');
+            celda.style.backgroundColor = 'green';
+        }
+    }
+}
+
+// Función para ejecutar el tick del juego
+function tickJuego() {
+    const tablero = document.getElementById('tablero');
+
+    // Mover enemigos
+    for (let fila = 14; fila >= 0; fila--) {
+        for (let columna = 0; columna < 5; columna++) {
+            const celda = document.getElementById(`celda-${fila}-${columna}`);
+            if (celda && celda.classList.contains('enemigo')) {
+                celda.classList.remove('enemigo');
+                celda.style.backgroundColor = '';
+                const nuevaFila = fila + 1;
+                if (nuevaFila < 15) {
+                    const nuevaCelda = document.getElementById(`celda-${nuevaFila}-${columna}`);
+                    if (nuevaCelda) {
+                        nuevaCelda.classList.add('enemigo');
+                        nuevaCelda.style.backgroundColor = 'red';
+                    }
+                } else {
+                    console.log('El enemigo alcanzó al jugador. Fin del juego.');
+                    clearInterval(intervaloJuego);
+                }
+            }
+        }
+    }
+
+    // Realizar ataques enemigos (lógica adicional puede ser implementada aquí)
+
+    // Mover buffs (si es necesario, lógica adicional puede ser implementada aquí)
+
+    // Verificar condiciones de final de oleada o juego
+    const enemigosRestantes = document.querySelectorAll('.enemigo').length;
+    if (enemigosRestantes === 0) {
+        console.log('Oleada completada. Generando nueva oleada.');
+        generarOleada(oleadaNumero++);
+    }
+}
+
 // Listeners para las teclas
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
@@ -81,6 +146,10 @@ window.addEventListener('keydown', (event) => {
             break;
     }
 });
+
+// Iniciar el intervalo del juego
+let oleadaNumero = 1;
+const intervaloJuego = setInterval(tickJuego, 1000);
 
 // Exportar la función si es necesario
 // export { initTablero };
