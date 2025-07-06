@@ -1,0 +1,30 @@
+/* Estilos para el tablero */
+#tablero {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 5px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Estilos para las celdas */
+.celda {
+    border: 1px solid #ccc;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Mantener las celdas cuadradas */
+}
+
+/* Colores para los elementos del juego */
+.celda.jugador {
+    background-color: blue;
+}
+
+.celda.enemigo {
+    background-color: red;
+}
+
+.celda.buff {
+    background-color: green;
+}

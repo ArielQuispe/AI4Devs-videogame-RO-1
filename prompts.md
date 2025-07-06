@@ -205,3 +205,9 @@ Integra sonidos usando new Audio():
 - Sonido eliminar enemigo.
 - Sonido recoger buff.
 - Sonido game over.
+
+## Prompt 10: Copilot VSC
+En style.css:
+- Haz que el tablero sea responsive.
+- Usa colores de fondo azul (jugador) y rojo (enemigos).
+- Buffs de color verde.
