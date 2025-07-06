@@ -190,3 +190,5 @@ En actions.js:
        - Mueve buffs.
        - Verifica condiciones de final de oleada o juego.
 - Usa setInterval para tickJuego.
+
+## Prompt 8: Copilot VSC

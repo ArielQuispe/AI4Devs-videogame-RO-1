@@ -132,6 +132,51 @@ function tickJuego() {
     }
 }
 
+// Función para cargar los puntajes del localStorage
+function cargarPuntajes() {
+    const puntajes = JSON.parse(localStorage.getItem('puntajes')) || [];
+    return puntajes;
+}
+
+// Función para guardar un nuevo puntaje en el localStorage
+function guardarPuntaje(nombre, score) {
+    const puntajes = cargarPuntajes();
+
+    // Insertar el nuevo puntaje
+    puntajes.push({ nombre, score });
+
+    // Ordenar los puntajes de mayor a menor
+    puntajes.sort((a, b) => b.score - a.score);
+
+    // Mantener solo los top 10
+    if (puntajes.length > 10) {
+        puntajes.pop();
+    }
+
+    // Guardar los puntajes actualizados en el localStorage
+    localStorage.setItem('puntajes', JSON.stringify(puntajes));
+}
+
+// Función para mostrar los puntajes en la tabla
+function mostrarPuntajes() {
+    const puntajes = cargarPuntajes();
+    const tablaBody = document.querySelector('#pantalla-puntajes tbody');
+
+    // Limpiar la tabla
+    tablaBody.innerHTML = '';
+
+    // Llenar la tabla con los puntajes
+    puntajes.forEach((puntaje, index) => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${puntaje.nombre}</td>
+            <td>${puntaje.score}</td>
+        `;
+        tablaBody.appendChild(fila);
+    });
+}
+
 // Listeners para las teclas
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
