@@ -143,7 +143,7 @@ La respuesta a tus preguntas son estas:
 # Respuesta 3: Chat GPT
 Entregó el plan de implementación y los prompt para lograrlo
 
-# Prompt 4: Copilot VSC
+## Prompt 4: Copilot VSC
 Crea index.html con Bootstrap 5 y las siguientes vistas en divs:
 
 1. Menú principal (id="pantalla-menu"):
@@ -166,3 +166,9 @@ Crea index.html con Bootstrap 5 y las siguientes vistas en divs:
    - Botón volver al menú
 
 Incluye links a Bootstrap, style.css, actions.js, values.js.
+
+## Prompt 5: Copilot VSC
+En actions.js:
+- Crea una función initTablero() que genere el tablero 5 columnas x 15 filas como divs o grid.
+- Cada celda con id="celda-x-y".
+- Inicializa la posición del jugador en la fila 14, columna 2 (centro).
