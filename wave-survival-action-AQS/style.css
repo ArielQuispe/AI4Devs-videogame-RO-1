@@ -1,0 +1,53 @@
+body {
+    background-color: #f8f9fa; /* Light background for the game */
+    font-family: 'Arial', sans-serif; /* Font style for the game */
+}
+
+.container {
+    max-width: 800px; /* Maximum width for the game container */
+    margin: 0 auto; /* Center the container */
+    padding: 20px; /* Padding around the container */
+    background-color: #ffffff; /* White background for the container */
+    border-radius: 8px; /* Rounded corners for the container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+h1, h2, h3 {
+    color: #343a40; /* Dark color for headings */
+}
+
+.button {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white; /* White text for buttons */
+    border: none; /* No border for buttons */
+    border-radius: 5px; /* Rounded corners for buttons */
+    padding: 10px 20px; /* Padding for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+.game-area {
+    position: relative; /* Positioning for game elements */
+    width: 100%; /* Full width for the game area */
+    height: 600px; /* Fixed height for the game area */
+    border: 2px solid #343a40; /* Border around the game area */
+    overflow: hidden; /* Hide overflow for game elements */
+}
+
+.character {
+    position: absolute; /* Absolute positioning for character */
+    bottom: 10px; /* Position character at the bottom */
+    left: 50%; /* Center character horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+}
+
+.enemy {
+    position: absolute; /* Absolute positioning for enemies */
+}
+
+.buff {
+    position: absolute; /* Absolute positioning for buffs */
+}
