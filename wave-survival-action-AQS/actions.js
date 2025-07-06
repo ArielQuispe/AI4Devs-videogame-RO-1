@@ -22,6 +22,7 @@ function initGame() {
     wave = 1;
     gameOver = false;
     startWave();
+    renderGameArea(); // Render the initial state of the game
 }
 
 // Start a new wave
@@ -95,6 +96,42 @@ function saveScore() {
     scores.sort((a, b) => b - a); // Sort scores descending
     scores = scores.slice(0, 10); // Keep top 10 scores
     localStorage.setItem('scores', JSON.stringify(scores));
+}
+
+// Render the game area
+function renderGameArea() {
+    const gameArea = document.getElementById('gameArea');
+    gameArea.innerHTML = ''; // Clear previous content
+
+    // Render player
+    const playerElement = document.createElement('div');
+    playerElement.className = 'player';
+    playerElement.style.gridColumnStart = player.position + 1;
+    playerElement.style.gridRowStart = 15; // Player is always at the bottom
+    gameArea.appendChild(playerElement);
+
+    // Render enemies
+    enemies.forEach((enemy) => {
+        const enemyElement = document.createElement('div');
+        enemyElement.className = enemy.isBoss ? 'enemy boss' : 'enemy';
+        enemyElement.style.gridColumnStart = enemy.position + 1;
+        enemyElement.style.gridRowStart = 1; // Enemies start at the top
+        gameArea.appendChild(enemyElement);
+    });
+
+    // Render buffs
+    buffs.forEach((buff) => {
+        const buffElement = document.createElement('div');
+        buffElement.className = `buff ${buff.type}`;
+        buffElement.style.gridColumnStart = buff.position + 1;
+        buffElement.style.gridRowStart = Math.floor(Math.random() * 14) + 1; // Random row
+        gameArea.appendChild(buffElement);
+    });
+}
+
+// Update the game area after each action
+function updateGameArea() {
+    renderGameArea();
 }
 
 // Start the game

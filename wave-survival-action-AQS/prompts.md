@@ -72,3 +72,8 @@ Corrige este error
 ```
 La aplicación inicia sin problemas, sin embargo solo se muestra menú inicial, ninguno de los dos botones genera ninguna acción, que está pasando?
 ```
+
+# Prompt 5
+```
+Ahora las acciones del menú principal están funcionando, ya que veo los mensajes de consola cuando hago click en ellos, sin embargo al inicial el juego la ventana no muestra nada, que está pasando?
+```
