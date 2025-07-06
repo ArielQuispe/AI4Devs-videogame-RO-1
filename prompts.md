@@ -211,3 +211,7 @@ En style.css:
 - Haz que el tablero sea responsive.
 - Usa colores de fondo azul (jugador) y rojo (enemigos).
 - Buffs de color verde.
+
+## Prompt 11: Copilot VSC
+He intentado probar el juego y me genera este error:
+values.js:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
