@@ -241,3 +241,15 @@ El comportamiento de los enemigos no es el esperado, te indico cada caso:
 El comportamiento de los buff no es el esperado, te indico cada caso:
 1. Habíamos definidos 2 buffs de momentos, los cuales no sé como distinguirlos visualmente cual es, de momento agrega un texto según el tipo de buff que sea HP si es un buff de puntos de salud y ATK si es un buff de daño
 2. Al ser recibidos por el personaje, está dandole 10 de puntaje, esto no debería ocurrir, el puntaje solo aumenta desde los enemigos
+
+## Prompt 17: Copilot VSC
+Hay situaciones que deben corregirse:
+1. Los buffs se están reseteando junto con el reinicio de cada oleada, esto no debería pasar, los buffs deberían seguir cayendo, solo desaparecen cuando llegan a la fila más baja.
+2. El personaje, al moverse queda como una "sombra" en la casilla en donde estaba, pareciera que ese estuviera vinculado a los ticks del juego, en ese sentido, el personaje no está afectado por los tick del juego
+3. Los enemigos están llegando a la fila 14, y deberían quedarse en la fila 13 y atacar desde ahí, de modo que la fila del jugador nunca quedaría cubierta por enemigos.
+4. La condición de termino del juego no se está cumpliendo, puedo acumular vida negativa sin fin
+5. Agrega el poder de daño del jugar en la patanlla, ya que aunque parece estar funcionando, no puedo verlo en la ventana y no me queda seguridad si los buff de daño están funcionando
+
+## Prompt 18: Copilot VSC
+> Se agrega pantallazo del tablero en la condición indicada
+Cuando un enemigo está en rango de ataque, este solo le quita puntos de salud al jugador, cuando el jugador se para en la misma columna que el enemigo, esto no es lo esperado, el enemigo debería poder hacer daño, siempre que se encuentre en el rango de ataque a nivel de filas, indiferentemente de la columna en que el enemigo o el jugador se encuentren.

@@ -7,6 +7,9 @@ let puntaje = 0;
 let salud = 100;
 let oleadaNumero = 1;
 
+// Variable para el daño del jugador
+let poderJugador = 1;
+
 document.querySelector('#pantalla-menu .btn-primary').addEventListener('click', () => {
     document.getElementById('pantalla-menu').style.display = 'none';
     document.getElementById('pantalla-seleccion').style.display = 'block';
@@ -122,7 +125,7 @@ function atacarEnemigo() {
     for (let fila = jugadorFila - 1; fila >= 0; fila--) {
         const enemigo = enemigos.find(e => e.fila === fila && e.columna === jugadorColumna);
         if (enemigo) {
-            enemigo.hp--;
+            enemigo.hp -= poderJugador;
             reproducirSonidoAtaqueJugador();
             if (enemigo.hp <= 0) {
                 enemigos = enemigos.filter(e => e !== enemigo);
@@ -171,21 +174,6 @@ function renderTablero() {
             celda.textContent = '';
         }
     }
-    // Dibujar jugador
-    const celdaJugador = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
-    if (celdaJugador) {
-        celdaJugador.classList.add('jugador');
-        celdaJugador.style.backgroundColor = 'blue';
-    }
-    // Dibujar enemigos
-    enemigos.forEach(e => {
-        const celda = document.getElementById(`celda-${e.fila}-${e.columna}`);
-        if (celda) {
-            celda.classList.add('enemigo');
-            celda.style.backgroundColor = 'red';
-            celda.textContent = e.hp;
-        }
-    });
     // Dibujar buffs
     buffs.forEach(b => {
         const celda = document.getElementById(`celda-${b.fila}-${b.columna}`);
@@ -195,6 +183,22 @@ function renderTablero() {
             celda.textContent = BUFFS.find(x => x.tipo === b.tipo).texto;
         }
     });
+    // Dibujar enemigos
+    enemigos.forEach(e => {
+        const celda = document.getElementById(`celda-${e.fila}-${e.columna}`);
+        if (celda) {
+            celda.classList.add('enemigo');
+            celda.style.backgroundColor = 'red';
+            celda.textContent = e.hp;
+        }
+    });
+    // Dibujar jugador
+    const celdaJugador = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
+    if (celdaJugador) {
+        celdaJugador.classList.add('jugador');
+        celdaJugador.style.backgroundColor = 'blue';
+        celdaJugador.textContent = '';
+    }
 }
 
 // Variable para controlar si el juego está en curso
@@ -205,37 +209,52 @@ function actualizarUI() {
     document.getElementById('indicador-puntaje').textContent = puntaje;
     document.getElementById('indicador-salud').textContent = salud;
     document.getElementById('indicador-oleada').textContent = oleadaNumero;
+    if (document.getElementById('indicador-poder')) {
+        document.getElementById('indicador-poder').textContent = poderJugador;
+    }
 }
 
 // Modificar tickJuego para mover enemigos y buffs usando los arrays
 function tickJuego() {
     if (!juegoEnCurso) return;
-    // Mover enemigos
-    enemigos.forEach(e => { if (e.fila < 14) e.fila++; });
-    // Mover buffs
+    // Mover enemigos (solo hasta fila 13)
+    enemigos.forEach(e => { if (e.fila < 13) e.fila++; });
+    // Mover buffs (hasta fila 14)
     buffs.forEach(b => { if (b.fila < 14) b.fila++; });
     // Colisiones buffs con jugador
     buffs = buffs.filter(b => {
         if (b.fila === jugadorFila && b.columna === jugadorColumna) {
             if (b.tipo === 'HP') salud = Math.min(100, salud + 10);
-            if (b.tipo === 'ATK') {/* lógica futura */}
+            if (b.tipo === 'ATK') poderJugador++;
             reproducirSonidoRecogerBuff();
             return false;
         }
         return b.fila < 15;
     });
-    // Colisiones enemigos con jugador
+    // Ataque de enemigos al jugador (si están en fila 13, sin importar columna)
+    let enemigoAtaco = false;
     enemigos.forEach(e => {
-        if (e.fila === jugadorFila && e.columna === jugadorColumna) {
+        if (e.fila === 13) {
             salud -= 10;
+            enemigoAtaco = true;
         }
     });
-    // Eliminar enemigos fuera del tablero
-    enemigos = enemigos.filter(e => e.fila < 15);
+    if (enemigoAtaco) {
+        reproducirSonidoAtaqueEnemigo();
+    }
+    // Eliminar buffs fuera del tablero
+    buffs = buffs.filter(b => b.fila < 15);
     // Actualizar UI
     actualizarUI();
     renderTablero();
     // Verificar condiciones de final de oleada o juego
+    if (salud <= 0) {
+        salud = 0;
+        juegoEnCurso = false;
+        reproducirSonidoGameOver();
+        alert('¡Game Over!');
+        return;
+    }
     if (enemigos.length === 0) {
         oleadaNumero++;
         generarOleada(oleadaNumero);
@@ -292,9 +311,10 @@ function iniciarJuego() {
     juegoEnCurso = true;
     puntaje = 0;
     salud = 100;
+    poderJugador = 1;
     oleadaNumero = 1;
     enemigos = [];
-    buffs = [];
+    // buffs no se reinician
     initTablero();
     generarOleada(oleadaNumero);
     actualizarUI();
