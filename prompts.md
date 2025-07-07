@@ -232,3 +232,12 @@ Okey, ahora si quedó bien la distribución del tablero, sin embargo están pasa
 * Los buff no están cayendo, se quedan estáticos en la posición donde aparecen.
 * El puntaje, salud y oleadas no están siendo actualizadas a la vista del jugador, aunque parece ser que si funcionan internamente de forma correcta, solo sería la interfaz de usuario la que faltaría actualizar.
 * Las columnas verticales están muy separadas, sería ideal que la distancia fuera la misma que la distancia entre las filas
+
+## Prompt 16: Copilot VSC
+El comportamiento de los enemigos no es el esperado, te indico cada caso:
+1. Son eliminados con solo 1 ataque, lo esperado es que sean eliminados con 3 ataques, el valor 3 debe ser definido en values.js
+2. Los enemigos al ser eliminados no aumentan el puntaje del jugador. Deberían aumentar el puntaje del jugador en 1, el valor 1 debe ser definido en values.js
+3. Mostrar sobre cada enemigo la cantidad de puntos de salud que le quedan. Actualmente no muestra los puntos de salud que tiene un enemigo
+El comportamiento de los buff no es el esperado, te indico cada caso:
+1. Habíamos definidos 2 buffs de momentos, los cuales no sé como distinguirlos visualmente cual es, de momento agrega un texto según el tipo de buff que sea HP si es un buff de puntos de salud y ATK si es un buff de daño
+2. Al ser recibidos por el personaje, está dandole 10 de puntaje, esto no debería ocurrir, el puntaje solo aumenta desde los enemigos

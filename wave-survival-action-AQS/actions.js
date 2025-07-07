@@ -113,46 +113,88 @@ function reproducirSonidoGameOver() {
     sonidoGameOver.play();
 }
 
+// Estado de enemigos y buffs
+let enemigos = []; // {fila, columna, hp}
+let buffs = [];    // {fila, columna, tipo}
+
 // Función para atacar al enemigo más cercano en la misma columna
 function atacarEnemigo() {
     for (let fila = jugadorFila - 1; fila >= 0; fila--) {
-        const celda = document.getElementById(`celda-${fila}-${jugadorColumna}`);
-        if (celda && celda.classList.contains('enemigo')) {
-            celda.classList.remove('enemigo');
-            celda.style.backgroundColor = '';
-            reproducirSonidoEliminarEnemigo();
-            console.log('Enemigo atacado en fila:', fila, 'columna:', jugadorColumna);
+        const enemigo = enemigos.find(e => e.fila === fila && e.columna === jugadorColumna);
+        if (enemigo) {
+            enemigo.hp--;
+            reproducirSonidoAtaqueJugador();
+            if (enemigo.hp <= 0) {
+                enemigos = enemigos.filter(e => e !== enemigo);
+                puntaje += PUNTAJE_ENEMIGO;
+                reproducirSonidoEliminarEnemigo();
+            }
+            renderTablero();
+            actualizarUI();
             break;
         }
     }
-    reproducirSonidoAtaqueJugador();
 }
 
 // Función para generar una oleada de enemigos y buffs
 function generarOleada(oleadaNumero) {
-    const tablero = document.getElementById('tablero');
-
+    enemigos = [];
+    buffs = [];
     // Generar enemigos
-    for (let i = 0; i < oleadaNumero + 3; i++) { // Más enemigos con cada oleada
+    for (let i = 0; i < oleadaNumero + 3; i++) {
         const fila = Math.floor(Math.random() * 5);
         const columna = Math.floor(Math.random() * 5);
-        const celda = document.getElementById(`celda-${fila}-${columna}`);
-        if (celda && !celda.classList.contains('enemigo')) {
+        if (!enemigos.some(e => e.fila === fila && e.columna === columna)) {
+            enemigos.push({ fila, columna, hp: ENEMIGO_HP });
+        }
+    }
+    // Generar buffs
+    for (let i = 0; i < 2; i++) {
+        const fila = Math.floor(Math.random() * 5);
+        const columna = Math.floor(Math.random() * 5);
+        const tipo = BUFFS[i % BUFFS.length].tipo;
+        if (!enemigos.some(e => e.fila === fila && e.columna === columna) && !buffs.some(b => b.fila === fila && b.columna === columna)) {
+            buffs.push({ fila, columna, tipo });
+        }
+    }
+    renderTablero();
+}
+
+// Renderizar tablero con enemigos y buffs
+function renderTablero() {
+    // Limpiar tablero
+    for (let fila = 0; fila < 15; fila++) {
+        for (let columna = 0; columna < 5; columna++) {
+            const celda = document.getElementById(`celda-${fila}-${columna}`);
+            celda.className = 'celda';
+            celda.style.backgroundColor = '';
+            celda.textContent = '';
+        }
+    }
+    // Dibujar jugador
+    const celdaJugador = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
+    if (celdaJugador) {
+        celdaJugador.classList.add('jugador');
+        celdaJugador.style.backgroundColor = 'blue';
+    }
+    // Dibujar enemigos
+    enemigos.forEach(e => {
+        const celda = document.getElementById(`celda-${e.fila}-${e.columna}`);
+        if (celda) {
             celda.classList.add('enemigo');
             celda.style.backgroundColor = 'red';
+            celda.textContent = e.hp;
         }
-    }
-
-    // Generar buffs
-    for (let i = 0; i < 2; i++) { // Dos buffs por oleada
-        const fila = Math.floor(Math.random() * 5);
-        const columna = Math.floor(Math.random() * 5);
-        const celda = document.getElementById(`celda-${fila}-${columna}`);
-        if (celda && !celda.classList.contains('enemigo') && !celda.classList.contains('buff')) {
+    });
+    // Dibujar buffs
+    buffs.forEach(b => {
+        const celda = document.getElementById(`celda-${b.fila}-${b.columna}`);
+        if (celda) {
             celda.classList.add('buff');
             celda.style.backgroundColor = 'green';
+            celda.textContent = BUFFS.find(x => x.tipo === b.tipo).texto;
         }
-    }
+    });
 }
 
 // Variable para controlar si el juego está en curso
@@ -165,69 +207,37 @@ function actualizarUI() {
     document.getElementById('indicador-oleada').textContent = oleadaNumero;
 }
 
-// Modificar tickJuego para mover buffs y actualizar la UI
+// Modificar tickJuego para mover enemigos y buffs usando los arrays
 function tickJuego() {
     if (!juegoEnCurso) return;
-    const tablero = document.getElementById('tablero');
-
     // Mover enemigos
-    for (let fila = 14; fila >= 0; fila--) {
-        for (let columna = 0; columna < 5; columna++) {
-            const celda = document.getElementById(`celda-${fila}-${columna}`);
-            if (celda && celda.classList.contains('enemigo')) {
-                celda.classList.remove('enemigo');
-                celda.style.backgroundColor = '';
-                const nuevaFila = fila + 1;
-                if (nuevaFila < 15) {
-                    const nuevaCelda = document.getElementById(`celda-${nuevaFila}-${columna}`);
-                    if (nuevaCelda) {
-                        nuevaCelda.classList.add('enemigo');
-                        nuevaCelda.style.backgroundColor = 'red';
-                    }
-                } else {
-                    reproducirSonidoGameOver();
-                    console.log('El enemigo alcanzó al jugador. Fin del juego.');
-                    clearInterval(intervaloJuego);
-                    juegoEnCurso = false;
-                }
-            }
-        }
-    }
-
+    enemigos.forEach(e => { if (e.fila < 14) e.fila++; });
     // Mover buffs
-    for (let fila = 14; fila >= 0; fila--) {
-        for (let columna = 0; columna < 5; columna++) {
-            const celda = document.getElementById(`celda-${fila}-${columna}`);
-            if (celda && celda.classList.contains('buff')) {
-                celda.classList.remove('buff');
-                celda.style.backgroundColor = '';
-                const nuevaFila = fila + 1;
-                if (nuevaFila < 15) {
-                    const nuevaCelda = document.getElementById(`celda-${nuevaFila}-${columna}`);
-                    if (nuevaCelda) {
-                        // Si el jugador está en la celda del buff
-                        if (nuevaFila === jugadorFila && columna === jugadorColumna) {
-                            puntaje += 10;
-                            salud = Math.min(100, salud + 10);
-                            reproducirSonidoRecogerBuff();
-                        } else {
-                            nuevaCelda.classList.add('buff');
-                            nuevaCelda.style.backgroundColor = 'green';
-                        }
-                    }
-                }
-            }
+    buffs.forEach(b => { if (b.fila < 14) b.fila++; });
+    // Colisiones buffs con jugador
+    buffs = buffs.filter(b => {
+        if (b.fila === jugadorFila && b.columna === jugadorColumna) {
+            if (b.tipo === 'HP') salud = Math.min(100, salud + 10);
+            if (b.tipo === 'ATK') {/* lógica futura */}
+            reproducirSonidoRecogerBuff();
+            return false;
         }
-    }
-
+        return b.fila < 15;
+    });
+    // Colisiones enemigos con jugador
+    enemigos.forEach(e => {
+        if (e.fila === jugadorFila && e.columna === jugadorColumna) {
+            salud -= 10;
+        }
+    });
+    // Eliminar enemigos fuera del tablero
+    enemigos = enemigos.filter(e => e.fila < 15);
     // Actualizar UI
     actualizarUI();
-
+    renderTablero();
     // Verificar condiciones de final de oleada o juego
-    const enemigosRestantes = document.querySelectorAll('.enemigo').length;
-    if (enemigosRestantes === 0) {
+    if (enemigos.length === 0) {
         oleadaNumero++;
-        console.log('Oleada completada. Generando nueva oleada.');
         generarOleada(oleadaNumero);
     }
 }
@@ -283,6 +293,8 @@ function iniciarJuego() {
     puntaje = 0;
     salud = 100;
     oleadaNumero = 1;
+    enemigos = [];
+    buffs = [];
     initTablero();
     generarOleada(oleadaNumero);
     actualizarUI();
