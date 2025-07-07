@@ -221,3 +221,14 @@ El juego al cargar la pagina, está iniciando el evento de Oleada Completada. Ge
 
 ## Prompt 13: Copilot VSC
 Estás mezclando script de javascript en el archivo html, te pedí que esto se mantega separado del archivo html, corrige eso
+
+## Prompt 14: Copilot VSC
+> Incluye screenshot del tablero actual
+El tablero está mal, debería tener una disposición vertical, actualmente tiene una disposición horizontal. Ajusta eso
+
+## Prompt 15: Copilot VSC
+> Incluye screenshot del tablero actual
+Okey, ahora si quedó bien la distribución del tablero, sin embargo están pasando varias cosas que no deberían:
+* Los buff no están cayendo, se quedan estáticos en la posición donde aparecen.
+* El puntaje, salud y oleadas no están siendo actualizadas a la vista del jugador, aunque parece ser que si funcionan internamente de forma correcta, solo sería la interfaz de usuario la que faltaría actualizar.
+* Las columnas verticales están muy separadas, sería ideal que la distancia fuera la misma que la distancia entre las filas

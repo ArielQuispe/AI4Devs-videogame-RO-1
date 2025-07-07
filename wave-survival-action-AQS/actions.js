@@ -2,6 +2,11 @@
 let jugadorFila = 14;
 let jugadorColumna = 2;
 
+// Variables de estado
+let puntaje = 0;
+let salud = 100;
+let oleadaNumero = 1;
+
 document.querySelector('#pantalla-menu .btn-primary').addEventListener('click', () => {
     document.getElementById('pantalla-menu').style.display = 'none';
     document.getElementById('pantalla-seleccion').style.display = 'block';
@@ -153,10 +158,16 @@ function generarOleada(oleadaNumero) {
 // Variable para controlar si el juego está en curso
 let juegoEnCurso = false;
 
-// Modificar tickJuego para verificar si el juego está en curso
-function tickJuego() {
-    if (!juegoEnCurso) return; // Salir si el juego no está en curso
+// Función para actualizar la UI
+function actualizarUI() {
+    document.getElementById('indicador-puntaje').textContent = puntaje;
+    document.getElementById('indicador-salud').textContent = salud;
+    document.getElementById('indicador-oleada').textContent = oleadaNumero;
+}
 
+// Modificar tickJuego para mover buffs y actualizar la UI
+function tickJuego() {
+    if (!juegoEnCurso) return;
     const tablero = document.getElementById('tablero');
 
     // Mover enemigos
@@ -183,11 +194,41 @@ function tickJuego() {
         }
     }
 
+    // Mover buffs
+    for (let fila = 14; fila >= 0; fila--) {
+        for (let columna = 0; columna < 5; columna++) {
+            const celda = document.getElementById(`celda-${fila}-${columna}`);
+            if (celda && celda.classList.contains('buff')) {
+                celda.classList.remove('buff');
+                celda.style.backgroundColor = '';
+                const nuevaFila = fila + 1;
+                if (nuevaFila < 15) {
+                    const nuevaCelda = document.getElementById(`celda-${nuevaFila}-${columna}`);
+                    if (nuevaCelda) {
+                        // Si el jugador está en la celda del buff
+                        if (nuevaFila === jugadorFila && columna === jugadorColumna) {
+                            puntaje += 10;
+                            salud = Math.min(100, salud + 10);
+                            reproducirSonidoRecogerBuff();
+                        } else {
+                            nuevaCelda.classList.add('buff');
+                            nuevaCelda.style.backgroundColor = 'green';
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Actualizar UI
+    actualizarUI();
+
     // Verificar condiciones de final de oleada o juego
     const enemigosRestantes = document.querySelectorAll('.enemigo').length;
     if (enemigosRestantes === 0) {
+        oleadaNumero++;
         console.log('Oleada completada. Generando nueva oleada.');
-        generarOleada(oleadaNumero++);
+        generarOleada(oleadaNumero);
     }
 }
 
@@ -239,9 +280,12 @@ function mostrarPuntajes() {
 // Función para iniciar el juego
 function iniciarJuego() {
     juegoEnCurso = true;
+    puntaje = 0;
+    salud = 100;
     oleadaNumero = 1;
     initTablero();
     generarOleada(oleadaNumero);
+    actualizarUI();
     console.log('Juego iniciado.');
 }
 
@@ -261,7 +305,6 @@ window.addEventListener('keydown', (event) => {
 });
 
 // Iniciar el intervalo del juego
-let oleadaNumero = 1;
 const intervaloJuego = setInterval(tickJuego, 1000);
 
 // --- MANEJO DE PANTALLAS Y BOTONES ---
