@@ -139,10 +139,31 @@ function atacarEnemigo() {
     }
 }
 
-// Función para generar una oleada de enemigos y buffs
+// Generar buffs aleatorios, entre 0 y 2 por oleada, siempre en la fila superior y en columnas libres
+function generarBuffs() {
+    let nuevosBuffs = [];
+    let columnasUsadas = buffs.filter(b => b.fila === 0).map(b => b.columna);
+    let cantidadBuffs = Math.floor(Math.random() * 3); // 0, 1 o 2
+    let intentos = 0;
+    while (nuevosBuffs.length < cantidadBuffs && intentos < 10) {
+        const columna = Math.floor(Math.random() * 5);
+        if (!columnasUsadas.includes(columna)) {
+            // Solo agregar si no hay enemigo en fila 0 y esa columna
+            if (!enemigos.some(e => e.fila === 0 && e.columna === columna)) {
+                const tipo = BUFFS[Math.floor(Math.random() * BUFFS.length)].tipo;
+                nuevosBuffs.push({ fila: 0, columna, tipo });
+                columnasUsadas.push(columna);
+            }
+        }
+        intentos++;
+    }
+    buffs = buffs.concat(nuevosBuffs);
+}
+
+// Modificar generarOleada para NO reiniciar buffs y solo reiniciar enemigos
 function generarOleada(oleadaNumero) {
     enemigos = [];
-    buffs = [];
+    // buffs no se reinician
     // Generar enemigos
     for (let i = 0; i < oleadaNumero + 3; i++) {
         const fila = Math.floor(Math.random() * 5);
@@ -151,15 +172,7 @@ function generarOleada(oleadaNumero) {
             enemigos.push({ fila, columna, hp: ENEMIGO_HP });
         }
     }
-    // Generar buffs
-    for (let i = 0; i < 2; i++) {
-        const fila = Math.floor(Math.random() * 5);
-        const columna = Math.floor(Math.random() * 5);
-        const tipo = BUFFS[i % BUFFS.length].tipo;
-        if (!enemigos.some(e => e.fila === fila && e.columna === columna) && !buffs.some(b => b.fila === fila && b.columna === columna)) {
-            buffs.push({ fila, columna, tipo });
-        }
-    }
+    generarBuffs();
     renderTablero();
 }
 
@@ -219,9 +232,13 @@ function tickJuego() {
     if (!juegoEnCurso) return;
     // Mover enemigos (solo hasta fila 13)
     enemigos.forEach(e => { if (e.fila < 13) e.fila++; });
-    // Mover buffs (hasta fila 14)
-    buffs.forEach(b => { if (b.fila < 14) b.fila++; });
-    // Colisiones buffs con jugador
+    // Mover buffs (hasta fila 14, SIEMPRE bajan aunque haya enemigo)
+    buffs.forEach(b => {
+        if (b.fila < 14) {
+            b.fila++;
+        }
+    });
+    // Colisiones buffs con jugador y eliminación en la fila inferior
     buffs = buffs.filter(b => {
         if (b.fila === jugadorFila && b.columna === jugadorColumna) {
             if (b.tipo === 'HP') salud = Math.min(100, salud + 10);
@@ -229,7 +246,11 @@ function tickJuego() {
             reproducirSonidoRecogerBuff();
             return false;
         }
-        return b.fila < 15;
+        // Eliminar buff si llegó a la fila inferior y el jugador no lo recogió
+        if (b.fila >= 14) {
+            return false;
+        }
+        return true;
     });
     // Ataque de enemigos al jugador (si están en fila 13, sin importar columna)
     let enemigoAtaco = false;

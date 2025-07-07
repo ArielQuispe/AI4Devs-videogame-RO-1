@@ -253,3 +253,9 @@ Hay situaciones que deben corregirse:
 ## Prompt 18: Copilot VSC
 > Se agrega pantallazo del tablero en la condición indicada
 Cuando un enemigo está en rango de ataque, este solo le quita puntos de salud al jugador, cuando el jugador se para en la misma columna que el enemigo, esto no es lo esperado, el enemigo debería poder hacer daño, siempre que se encuentre en el rango de ataque a nivel de filas, indiferentemente de la columna en que el enemigo o el jugador se encuentren.
+
+## Prompt 19: Copilot VSC
+El comportamiento de los buffs no es el esperado
+* Actualmente cuando todos los enemigos de la oleada son eliminados, los buffs que siguen cayendo desaparecen
+* Se espera que los buffs se mantengan, aun si la oleada es vuelta a generar. Los buffs solo desaparecen al llegar al fila inferior. La aparición y eliminación de enemigos y buff no está vinculada
+* Los buffs deben generarse de forma aleatoria, máximo 2 veces por nivel y siempre deben aparece en la fila superior del tablero
