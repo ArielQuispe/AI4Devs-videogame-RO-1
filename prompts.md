@@ -271,3 +271,15 @@ La revisión de puntajes no se está haciendo correctamente.
 * El mensaje en caso de haber quedado no debe decir que ingrese su nombre, ya que el nombre se lo pedimos antes de iniciar la * partida
 * Luego de terminar una partida, la ventana de ver puntajes sigue saliendo vacía
 Los puntajes deben guardarse en el navegador, de modo que si el usuario refresca (F5) los puntajes hechos no se pierdan
+
+## Prompt 22:
+Implementar mecanica de enemigo jefe:
+* Este aparecerá en cada ronda que sea multiplo de 10
+* En las oleadas de jefe, solo parecen jefes y no enemigos normales
+* La cantidad de jefes que aparecen en cada oleada la división del número de la oleada entre 10, de modo que en la oleada 10 saldrá un jefe, en la oleada 20 saldran 2 y así sucesivamente
+* Los jefes tienen 20 de puntos de salud, a diferencia de los enemigos normales
+* Los jefes tienen un rango de 3 filas, es decir cuando lleguen a la fila 11 ya pueden atacar y dejarán de acercarse al jugador
+* Los jefes realizan 20 de daño
+* Los valores asociados al enemigo jefe, debe quedar establecido en el archivo values.js, al igual que los valores para enemigos normales que ya usamos.
+* Dar una alerta especial cuando llegue una oleada de jefe, en la que los tick del juego deben hacer una pausa de 3 segundos, antes de continuar
+* Para la etapa inicial, un enemigo jefe tendrá un color rojo un poco más oscuro, para diferenciarlo de los enemigos normales visualmente

@@ -68,6 +68,8 @@ function moverJugador(direccion) {
     const celdaActual = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
     if (celdaActual) {
         celdaActual.style.backgroundColor = '';
+        celdaActual.classList.remove('jugador');
+        celdaActual.textContent = '';
     }
 
     // Actualizar la posición del jugador
@@ -80,7 +82,9 @@ function moverJugador(direccion) {
     // Dibujar al jugador en la nueva posición
     const nuevaCelda = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
     if (nuevaCelda) {
+        nuevaCelda.classList.add('jugador');
         nuevaCelda.style.backgroundColor = 'blue';
+        nuevaCelda.textContent = '';
     }
 }
 
@@ -117,8 +121,23 @@ function reproducirSonidoGameOver() {
 }
 
 // Estado de enemigos y buffs
-let enemigos = []; // {fila, columna, hp}
+let enemigos = []; // {fila, columna, hp, jefe}
 let buffs = [];    // {fila, columna, tipo}
+let alertaJefePendiente = false;
+
+// Función para mostrar alerta de jefe y pausar el juego
+function mostrarAlertaJefe(callback) {
+    const alerta = document.createElement('div');
+    alerta.id = 'alerta-jefe';
+    alerta.className = 'alert alert-danger fw-bold fs-3 position-fixed top-50 start-50 translate-middle text-center';
+    alerta.style.zIndex = 9999;
+    alerta.textContent = '¡OLEADA DE JEFE! Prepárate...';
+    document.body.appendChild(alerta);
+    setTimeout(() => {
+        alerta.remove();
+        if (callback) callback();
+    }, 3000);
+}
 
 // Función para atacar al enemigo más cercano en la misma columna
 function atacarEnemigo() {
@@ -129,7 +148,7 @@ function atacarEnemigo() {
             reproducirSonidoAtaqueJugador();
             if (enemigo.hp <= 0) {
                 enemigos = enemigos.filter(e => e !== enemigo);
-                puntaje += PUNTAJE_ENEMIGO;
+                puntaje += enemigo.jefe ? 10 : PUNTAJE_ENEMIGO;
                 reproducirSonidoEliminarEnemigo();
             }
             renderTablero();
@@ -164,15 +183,34 @@ function generarBuffs() {
 function generarOleada(oleadaNumero) {
     enemigos = [];
     // buffs no se reinician
-    // Generar enemigos
-    for (let i = 0; i < oleadaNumero + 3; i++) {
-        const fila = Math.floor(Math.random() * 5);
-        const columna = Math.floor(Math.random() * 5);
-        if (!enemigos.some(e => e.fila === fila && e.columna === columna)) {
-            enemigos.push({ fila, columna, hp: ENEMIGO_HP });
+    if (oleadaNumero % 10 === 0) {
+        // Oleada de jefe
+        const cantidadJefes = Math.floor(oleadaNumero / 10);
+        let columnasDisponibles = [0,1,2,3,4];
+        for (let i = 0; i < cantidadJefes; i++) {
+            // Distribuir jefes en columnas distintas si es posible
+            let columna;
+            if (columnasDisponibles.length > 0) {
+                const idx = Math.floor(Math.random() * columnasDisponibles.length);
+                columna = columnasDisponibles.splice(idx, 1)[0];
+            } else {
+                columna = Math.floor(Math.random() * 5);
+            }
+            enemigos.push({ fila: 0, columna, hp: JEFE_HP, jefe: true });
         }
+        alertaJefePendiente = true;
+    } else {
+        // Generar enemigos normales
+        for (let i = 0; i < oleadaNumero + 3; i++) {
+            const fila = Math.floor(Math.random() * 5);
+            const columna = Math.floor(Math.random() * 5);
+            if (!enemigos.some(e => e.fila === fila && e.columna === columna)) {
+                enemigos.push({ fila, columna, hp: ENEMIGO_HP, jefe: false });
+            }
+        }
+        generarBuffs();
+        alertaJefePendiente = false;
     }
-    generarBuffs();
     renderTablero();
 }
 
@@ -196,13 +234,19 @@ function renderTablero() {
             celda.textContent = BUFFS.find(x => x.tipo === b.tipo).texto;
         }
     });
-    // Dibujar enemigos
+    // Dibujar enemigos y jefes
     enemigos.forEach(e => {
         const celda = document.getElementById(`celda-${e.fila}-${e.columna}`);
         if (celda) {
-            celda.classList.add('enemigo');
-            celda.style.backgroundColor = 'red';
-            celda.textContent = e.hp;
+            if (e.jefe) {
+                celda.classList.add('jefe');
+                celda.style.backgroundColor = JEFE_COLOR;
+                celda.textContent = e.hp;
+            } else {
+                celda.classList.add('enemigo');
+                celda.style.backgroundColor = 'red';
+                celda.textContent = e.hp;
+            }
         }
     });
     // Dibujar jugador
@@ -230,8 +274,25 @@ function actualizarUI() {
 // Modificar tickJuego para mover enemigos y buffs usando los arrays
 function tickJuego() {
     if (!juegoEnCurso) return;
-    // Mover enemigos (solo hasta fila 13)
-    enemigos.forEach(e => { if (e.fila < 13) e.fila++; });
+    // Pausa especial para oleada de jefe
+    if (alertaJefePendiente) {
+        alertaJefePendiente = false;
+        mostrarAlertaJefe(() => {
+            // Continuar tick después de la pausa
+            tickJuego();
+        });
+        return;
+    }
+    // Mover enemigos
+    enemigos.forEach(e => {
+        if (e.jefe) {
+            // Jefe solo baja hasta fila 11
+            if (e.fila < JEFE_RANGO_FILA) e.fila++;
+        } else {
+            // Enemigo normal baja hasta fila 13
+            if (e.fila < 13) e.fila++;
+        }
+    });
     // Mover buffs (hasta fila 14, SIEMPRE bajan aunque haya enemigo)
     buffs.forEach(b => {
         if (b.fila < 14) {
@@ -252,12 +313,21 @@ function tickJuego() {
         }
         return true;
     });
-    // Ataque de enemigos al jugador (si están en fila 13, sin importar columna)
+    // Ataque de enemigos al jugador
     let enemigoAtaco = false;
     enemigos.forEach(e => {
-        if (e.fila === 13) {
-            salud -= 10;
-            enemigoAtaco = true;
+        if (e.jefe) {
+            // Jefe ataca si está en fila >= JEFE_RANGO_FILA
+            if (e.fila >= JEFE_RANGO_FILA) {
+                salud -= JEFE_DANO;
+                enemigoAtaco = true;
+            }
+        } else {
+            // Enemigo normal ataca si está en fila 13
+            if (e.fila === 13) {
+                salud -= 10;
+                enemigoAtaco = true;
+            }
         }
     });
     if (enemigoAtaco) {
