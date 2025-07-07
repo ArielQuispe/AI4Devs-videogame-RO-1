@@ -259,3 +259,15 @@ El comportamiento de los buffs no es el esperado
 * Actualmente cuando todos los enemigos de la oleada son eliminados, los buffs que siguen cayendo desaparecen
 * Se espera que los buffs se mantengan, aun si la oleada es vuelta a generar. Los buffs solo desaparecen al llegar al fila inferior. La aparición y eliminación de enemigos y buff no está vinculada
 * Los buffs deben generarse de forma aleatoria, máximo 2 veces por nivel y siempre deben aparece en la fila superior del tablero
+
+## Prompt 20: Copilot VSC
+Cuando el jugador pierde, el comportamiento no es el esperado:
+1. La condición de puntos de salud del personaje se está cumpliendo, eso no hay que cambiarlo
+2. Parece que no está revisando los puntajes actuales, ya que no me dice si quedé dentro del ranking de puntajes
+3. Al terminar la partida, no hay forma de volver al menu inicial, por lo que es necesario agregar un botón que me lleve al menu inicial
+
+## Prompt 21: 
+La revisión de puntajes no se está haciendo correctamente.
+* El mensaje en caso de haber quedado no debe decir que ingrese su nombre, ya que el nombre se lo pedimos antes de iniciar la * partida
+* Luego de terminar una partida, la ventana de ver puntajes sigue saliendo vacía
+Los puntajes deben guardarse en el navegador, de modo que si el usuario refresca (F5) los puntajes hechos no se pierdan

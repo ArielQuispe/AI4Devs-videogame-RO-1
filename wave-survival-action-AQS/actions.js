@@ -273,13 +273,41 @@ function tickJuego() {
         salud = 0;
         juegoEnCurso = false;
         reproducirSonidoGameOver();
-        alert('¡Game Over!');
+        mostrarGameOver();
         return;
     }
     if (enemigos.length === 0) {
         oleadaNumero++;
         generarOleada(oleadaNumero);
     }
+}
+
+// Mostrar pantalla de Game Over y ranking
+function mostrarGameOver() {
+    document.getElementById('pantalla-juego').style.display = 'none';
+    document.getElementById('pantalla-gameover').style.display = 'block';
+    // Revisar si el puntaje entra al ranking y guardar si corresponde
+    const nombre = document.getElementById('nombre-jugador') ? document.getElementById('nombre-jugador').value : 'Jugador';
+    let puntajes = cargarPuntajes();
+    let ranking = false;
+    if (puntajes.length < 10 || puntaje > puntajes[puntajes.length - 1].score) {
+        guardarPuntaje(nombre, puntaje);
+        ranking = true;
+        puntajes = cargarPuntajes(); // recargar para mostrar actualizado
+    }
+    const mensaje = ranking
+        ? '¡Felicidades! Tu puntaje está en el Top 10.'
+        : 'No entraste al Top 10. ¡Sigue intentando!';
+    document.getElementById('mensaje-ranking').textContent = mensaje;
+    mostrarPuntajes();
+}
+
+// Botón para volver al menú desde Game Over
+if (document.getElementById('btn-volver-menu')) {
+    document.getElementById('btn-volver-menu').addEventListener('click', () => {
+        document.getElementById('pantalla-gameover').style.display = 'none';
+        document.getElementById('pantalla-menu').style.display = 'block';
+    });
 }
 
 // Función para cargar los puntajes del localStorage
