@@ -215,3 +215,9 @@ En style.css:
 ## Prompt 11: Copilot VSC
 He intentado probar el juego y me genera este error:
 values.js:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+
+## Prompt 12: Copilot VSC
+El juego al cargar la pagina, está iniciando el evento de Oleada Completada. Generando una nueva oleada, cada vez, aún cuando el juego no ha iniciado. Además los botones de Iniciar Juego y Ver Puntaje del menu inicial tampoco estan funcionando al parecer
+
+## Prompt 13: Copilot VSC
+Estás mezclando script de javascript en el archivo html, te pedí que esto se mantega separado del archivo html, corrige eso
