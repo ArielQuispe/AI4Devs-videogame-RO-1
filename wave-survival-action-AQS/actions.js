@@ -272,13 +272,20 @@ function actualizarUI() {
 }
 
 // Modificar tickJuego para mover enemigos y buffs usando los arrays
+let intervaloJuego = null;
+let velocidadTick = 1000; // ms
+
+function iniciarIntervaloJuego() {
+    if (intervaloJuego) clearInterval(intervaloJuego);
+    intervaloJuego = setInterval(tickJuego, velocidadTick);
+}
+
 function tickJuego() {
     if (!juegoEnCurso) return;
     // Pausa especial para oleada de jefe
     if (alertaJefePendiente) {
         alertaJefePendiente = false;
         mostrarAlertaJefe(() => {
-            // Continuar tick después de la pausa
             tickJuego();
         });
         return;
@@ -347,6 +354,11 @@ function tickJuego() {
         return;
     }
     if (enemigos.length === 0) {
+        // Si fue una oleada de jefe, aumentar velocidad
+        if (oleadaNumero % 10 === 0) {
+            velocidadTick = Math.max(velocidadTick - 50, 100); // No menos de 100ms
+            iniciarIntervaloJuego();
+        }
         oleadaNumero++;
         generarOleada(oleadaNumero);
     }
@@ -361,7 +373,7 @@ function mostrarGameOver() {
     let puntajes = cargarPuntajes();
     let ranking = false;
     if (puntajes.length < 10 || puntaje > puntajes[puntajes.length - 1].score) {
-        guardarPuntaje(nombre, puntaje);
+        guardarPuntaje(nombre, puntaje, oleadaNumero);
         ranking = true;
         puntajes = cargarPuntajes(); // recargar para mostrar actualizado
     }
@@ -387,21 +399,13 @@ function cargarPuntajes() {
 }
 
 // Función para guardar un nuevo puntaje en el localStorage
-function guardarPuntaje(nombre, score) {
+function guardarPuntaje(nombre, score, oleada) {
     const puntajes = cargarPuntajes();
-
-    // Insertar el nuevo puntaje
-    puntajes.push({ nombre, score });
-
-    // Ordenar los puntajes de mayor a menor
+    puntajes.push({ nombre, score, oleada });
     puntajes.sort((a, b) => b.score - a.score);
-
-    // Mantener solo los top 10
     if (puntajes.length > 10) {
         puntajes.pop();
     }
-
-    // Guardar los puntajes actualizados en el localStorage
     localStorage.setItem('puntajes', JSON.stringify(puntajes));
 }
 
@@ -409,17 +413,14 @@ function guardarPuntaje(nombre, score) {
 function mostrarPuntajes() {
     const puntajes = cargarPuntajes();
     const tablaBody = document.querySelector('#pantalla-puntajes tbody');
-
-    // Limpiar la tabla
     tablaBody.innerHTML = '';
-
-    // Llenar la tabla con los puntajes
     puntajes.forEach((puntaje, index) => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td>${index + 1}</td>
             <td>${puntaje.nombre}</td>
             <td>${puntaje.score}</td>
+            <td>${puntaje.oleada || '-'}</td>
         `;
         tablaBody.appendChild(fila);
     });
@@ -433,6 +434,8 @@ function iniciarJuego() {
     poderJugador = 1;
     oleadaNumero = 1;
     enemigos = [];
+    velocidadTick = 1000;
+    iniciarIntervaloJuego();
     // buffs no se reinician
     initTablero();
     generarOleada(oleadaNumero);
@@ -455,8 +458,8 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-// Iniciar el intervalo del juego
-const intervaloJuego = setInterval(tickJuego, 1000);
+// Eliminar la declaración duplicada de intervaloJuego
+// const intervaloJuego = setInterval(tickJuego, 1000);
 
 // --- MANEJO DE PANTALLAS Y BOTONES ---
 

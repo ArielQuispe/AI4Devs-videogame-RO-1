@@ -283,3 +283,7 @@ Implementar mecanica de enemigo jefe:
 * Los valores asociados al enemigo jefe, debe quedar establecido en el archivo values.js, al igual que los valores para enemigos normales que ya usamos.
 * Dar una alerta especial cuando llegue una oleada de jefe, en la que los tick del juego deben hacer una pausa de 3 segundos, antes de continuar
 * Para la etapa inicial, un enemigo jefe tendrá un color rojo un poco más oscuro, para diferenciarlo de los enemigos normales visualmente
+
+## Prompt 23:
+* Al finalizar una oleada de jefe, es decir oleada multiplo de 10, la velocidad de los tick del juego debe disminuir en 0.05 segundos, para que el juego avance más rapido y aumente la dificultad.
+* Si el jugador entra en el ranking de puntajes, se debe registrar además de lo que se registra, la oleada a la que llego. Esto tambien debe mostrarse en la lista de ranking de puntajes
