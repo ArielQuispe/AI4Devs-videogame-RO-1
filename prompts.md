@@ -331,3 +331,13 @@ Si bien es capaz de mantener el personaje que se elige en la selección, y las a
 Se debe hacer que el sprite del personaje se vea completo, sin importar que el cuadrado de la grilla de posición sea más pequeño.
 * Hacer que el personaje se vea de forma completo el framde de 64 x 64
 * No es necesario ampliar el tamaño de la grilla, ya que esta es solo referencial de la posición
+
+## Prompt 30: Sprite y animación para buffs
+He agregado 2 nuevos sprites buff-ATK.png y buff-HP.png, esto corresponden a los sprite definidos en values.js por su tipo.
+* Debe mostrarse el sprite que corresponda al tipo de buff al momento de generarse
+* Se debe agregar una animación al sprite de girar sobre su centro, la velocidad de la animación debe ser lenta a media
+* Si el tamaño del sprite es más grande que el cuadrado de la cuadrícula, este debe quedar por encima del cuadrado, de la misma forma que hicimos con los sprites del heroe
+
+> Se dieron algunos problemas en el código generado, que fui arreglando con instrucciones simples, finalmente no implemente el giro, ya que me dio algunos problemas con el renderizado del tablero
+
+## Prompt 31: 

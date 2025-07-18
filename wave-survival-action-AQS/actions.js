@@ -278,13 +278,42 @@ function renderTablero() {
             celda.style.backgroundPosition = '';
         }
     }
-    // Dibujar buffs
+    // Dibujar buffs con sprite, animación y texto
     buffs.forEach(b => {
         const celda = document.getElementById(`celda-${b.fila}-${b.columna}`);
         if (celda) {
             celda.classList.add('buff');
-            celda.style.backgroundColor = 'green';
-            celda.textContent = BUFFS.find(x => x.tipo === b.tipo).texto;
+            // Mantener sprite-buff y buff-text si ya existen para no reiniciar animación
+            let img = '';
+            if (b.tipo === 'HP') img = 'buff-HP.png';
+            else if (b.tipo === 'ATK') img = 'buff-ATK.png';
+            if (img) {
+                celda.style.backgroundColor = 'cyan';
+                let spriteBuff = celda.querySelector('.sprite-buff');
+                if (!spriteBuff) {
+                    spriteBuff = document.createElement('div');
+                    spriteBuff.className = 'sprite-buff anim-buff-spin';
+                    spriteBuff.style.backgroundImage = `url('sprites/${img}')`;
+                    celda.appendChild(spriteBuff);
+                } else {
+                    // Si ya existe, solo actualiza la imagen si cambió
+                    const bg = spriteBuff.style.backgroundImage;
+                    const expected = `url(\"sprites/${img}\")`;
+                    if (bg !== expected) spriteBuff.style.backgroundImage = `url('sprites/${img}')`;
+                }
+                let buffText = celda.querySelector('.buff-text');
+                if (!buffText) {
+                    buffText = document.createElement('div');
+                    buffText.className = 'buff-text';
+                    buffText.textContent = b.tipo;
+                    celda.appendChild(buffText);
+                } else {
+                    buffText.textContent = b.tipo;
+                }
+            } else {
+                celda.style.backgroundColor = 'green';
+                celda.textContent = b.tipo;
+            }
         }
     });
     // Dibujar enemigos y jefes
