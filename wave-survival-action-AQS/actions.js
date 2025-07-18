@@ -10,26 +10,71 @@ let oleadaNumero = 1;
 // Variable para el daño del jugador
 let poderJugador = 1;
 
-document.querySelector('#pantalla-menu .btn-primary').addEventListener('click', () => {
-    document.getElementById('pantalla-menu').style.display = 'none';
-    document.getElementById('pantalla-seleccion').style.display = 'block';
-});
+// Variables para animación de sprite
+let direccionJugador = 'back'; // 'back', 'left', 'right', 'front'
+let frameAnim = false;
+let animInterval = null;
+let personajeSprite = 'hero1.png'; // Por defecto
 
-document.querySelector('#pantalla-menu .btn-secondary').addEventListener('click', () => {
-    document.getElementById('pantalla-menu').style.display = 'none';
-    document.getElementById('pantalla-puntajes').style.display = 'block';
-    mostrarPuntajes();
-});
+// --- Selección de personaje y preview ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Botón Iniciar Juego Nuevo
+    const btnIniciar = document.querySelector('#pantalla-menu .btn-primary');
+    if (btnIniciar) {
+        btnIniciar.addEventListener('click', () => {
+            document.getElementById('pantalla-menu').style.display = 'none';
+            document.getElementById('pantalla-seleccion').style.display = 'block';
+        });
+    }
 
-document.querySelector('#pantalla-seleccion .btn-success').addEventListener('click', () => {
-    document.getElementById('pantalla-seleccion').style.display = 'none';
-    document.getElementById('pantalla-juego').style.display = 'block';
-    iniciarJuego();
-});
+    // Botón Ver Puntajes
+    const btnPuntajes = document.querySelector('#pantalla-menu .btn-secondary');
+    if (btnPuntajes) {
+        btnPuntajes.addEventListener('click', () => {
+            document.getElementById('pantalla-menu').style.display = 'none';
+            document.getElementById('pantalla-puntajes').style.display = 'block';
+            mostrarPuntajes();
+        });
+    }
 
-document.querySelector('#pantalla-puntajes .btn-secondary').addEventListener('click', () => {
-    document.getElementById('pantalla-puntajes').style.display = 'none';
-    document.getElementById('pantalla-menu').style.display = 'block';
+    // Botón Iniciar Juego en selección de personaje
+    const btnIniciarJuego = document.querySelector('#pantalla-seleccion .btn-success');
+    if (btnIniciarJuego) {
+        btnIniciarJuego.addEventListener('click', () => {
+            document.getElementById('pantalla-seleccion').style.display = 'none';
+            document.getElementById('pantalla-juego').style.display = 'block';
+            iniciarJuego();
+        });
+    }
+
+    // Botón Volver al Menú en pantalla de puntajes
+    const btnVolverMenu = document.querySelector('#pantalla-puntajes .btn-secondary');
+    if (btnVolverMenu) {
+        btnVolverMenu.addEventListener('click', () => {
+            document.getElementById('pantalla-puntajes').style.display = 'none';
+            document.getElementById('pantalla-menu').style.display = 'block';
+        });
+    }
+
+    // En selección de personaje, mostrar sprite de frente
+    // (esto se puede mejorar para que cambie según selección)
+    const selectorPersonaje = document.getElementById('selector-personaje');
+    const preview = document.createElement('div');
+    preview.style.width = '64px';
+    preview.style.height = '64px';
+    preview.style.margin = '0 auto 10px auto';
+    preview.style.backgroundRepeat = 'no-repeat';
+    preview.style.backgroundSize = '256px 256px';
+    document.getElementById('pantalla-seleccion').insertBefore(preview, selectorPersonaje.parentNode);
+    function updatePreview() {
+        const idx = parseInt(selectorPersonaje.value, 10);
+        personajeSprite = `hero${idx}.png`;
+        // Frame 3: mirando de frente (posición -128px 0)
+        preview.style.backgroundImage = `url('sprites/${personajeSprite}')`;
+        preview.style.backgroundPosition = '-128px 0px';
+    }
+    selectorPersonaje.addEventListener('change', updatePreview);
+    updatePreview();
 });
 
 // Función para inicializar el tablero
@@ -63,28 +108,32 @@ function initTablero() {
 function moverJugador(direccion) {
     const maxColumnas = 4;
     const minColumnas = 0;
-
     // Limpiar la celda actual del jugador
     const celdaActual = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
     if (celdaActual) {
         celdaActual.style.backgroundColor = '';
-        celdaActual.classList.remove('jugador');
+        celdaActual.classList.remove('jugador', 'sprite-back', 'sprite-left', 'sprite-right', 'sprite-front', 'anim-move');
         celdaActual.textContent = '';
+        celdaActual.style.backgroundImage = '';
     }
-
-    // Actualizar la posición del jugador
+    // Actualizar la posición y dirección
+    let movio = false;
     if (direccion === 'izquierda' && jugadorColumna > minColumnas) {
         jugadorColumna--;
+        direccionJugador = 'left';
+        movio = true;
     } else if (direccion === 'derecha' && jugadorColumna < maxColumnas) {
         jugadorColumna++;
+        direccionJugador = 'right';
+        movio = true;
     }
-
-    // Dibujar al jugador en la nueva posición
-    const nuevaCelda = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
-    if (nuevaCelda) {
-        nuevaCelda.classList.add('jugador');
-        nuevaCelda.style.backgroundColor = 'blue';
-        nuevaCelda.textContent = '';
+    if (movio) {
+        animarMovimiento(direccionJugador);
+    } else {
+        direccionJugador = 'back';
+        frameAnim = false;
+        renderTablero();
+        iniciarAnimacionIdle();
     }
 }
 
@@ -223,6 +272,8 @@ function renderTablero() {
             celda.className = 'celda';
             celda.style.backgroundColor = '';
             celda.textContent = '';
+            celda.style.backgroundImage = '';
+            celda.style.backgroundPosition = '';
         }
     }
     // Dibujar buffs
@@ -249,11 +300,35 @@ function renderTablero() {
             }
         }
     });
-    // Dibujar jugador
+    // Dibujar jugador con sprite
     const celdaJugador = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
     if (celdaJugador) {
         celdaJugador.classList.add('jugador');
-        celdaJugador.style.backgroundColor = 'blue';
+        celdaJugador.classList.remove('sprite-back', 'sprite-left', 'sprite-right', 'sprite-front', 'anim-move');
+        let pos = '0px 0px';
+        let clase = '';
+        if (direccionJugador === 'back') {
+            clase = 'sprite-back';
+            pos = '0px 0px';
+        } else if (direccionJugador === 'left') {
+            clase = 'sprite-left';
+            pos = '-64px 0px';
+        } else if (direccionJugador === 'front') {
+            clase = 'sprite-front';
+            pos = '-128px 0px';
+        } else if (direccionJugador === 'right') {
+            clase = 'sprite-right';
+            pos = '-192px 0px';
+        }
+        // Animación: alterna entre frame de dirección y frame de espalda
+        if (frameAnim && (direccionJugador === 'left' || direccionJugador === 'right')) {
+            clase = 'sprite-back';
+            pos = '0px 0px';
+        }
+        celdaJugador.classList.add(clase);
+        celdaJugador.style.backgroundImage = `url('sprites/${personajeSprite}')`;
+        celdaJugador.style.backgroundPosition = pos;
+        celdaJugador.style.backgroundSize = '256px 256px';
         celdaJugador.textContent = '';
     }
 }
@@ -426,6 +501,36 @@ function mostrarPuntajes() {
     });
 }
 
+// --- Animación idle y movimiento ---
+function iniciarAnimacionIdle() {
+    if (animInterval) clearInterval(animInterval);
+    animInterval = setInterval(() => {
+        frameAnim = false;
+        renderTablero();
+    }, 400);
+}
+function detenerAnimacionIdle() {
+    if (animInterval) clearInterval(animInterval);
+}
+function animarMovimiento(direccion) {
+    detenerAnimacionIdle();
+    let ticks = 0;
+    if (animInterval) clearInterval(animInterval);
+    animInterval = setInterval(() => {
+        frameAnim = !frameAnim;
+        renderTablero();
+        ticks++;
+        if (ticks > 3) { // 3 ciclos de animación
+            clearInterval(animInterval);
+            frameAnim = false;
+            direccionJugador = 'back';
+            renderTablero();
+            iniciarAnimacionIdle();
+            
+        }
+    }, 120);
+}
+
 // Función para iniciar el juego
 function iniciarJuego() {
     juegoEnCurso = true;
@@ -435,7 +540,10 @@ function iniciarJuego() {
     oleadaNumero = 1;
     enemigos = [];
     velocidadTick = 1000;
+    direccionJugador = 'back';
+    frameAnim = false;
     iniciarIntervaloJuego();
+    iniciarAnimacionIdle();
     // buffs no se reinician
     initTablero();
     generarOleada(oleadaNumero);
@@ -501,7 +609,24 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('pantalla-menu').style.display = 'block';
         });
     }
-});
 
-// Exportar la función si es necesario
-// export { initTablero };
+    // En selección de personaje, mostrar sprite de frente
+    // (esto se puede mejorar para que cambie según selección)
+    const selectorPersonaje = document.getElementById('selector-personaje');
+    const preview = document.createElement('div');
+    preview.style.width = '64px';
+    preview.style.height = '64px';
+    preview.style.margin = '0 auto 10px auto';
+    preview.style.backgroundRepeat = 'no-repeat';
+    preview.style.backgroundSize = '256px 256px';
+    document.getElementById('pantalla-seleccion').insertBefore(preview, selectorPersonaje.parentNode);
+    function updatePreview() {
+        const idx = parseInt(selectorPersonaje.value, 10);
+        personajeSprite = `hero${idx}.png`;
+        // Frame 3: mirando de frente (posición -128px 0)
+        preview.style.backgroundImage = `url('sprites/${personajeSprite}')`;
+        preview.style.backgroundPosition = '-128px 0px';
+    }
+    selectorPersonaje.addEventListener('change', updatePreview);
+    updatePreview();
+});

@@ -287,3 +287,25 @@ Implementar mecanica de enemigo jefe:
 ## Prompt 23:
 * Al finalizar una oleada de jefe, es decir oleada multiplo de 10, la velocidad de los tick del juego debe disminuir en 0.05 segundos, para que el juego avance más rapido y aumente la dificultad.
 * Si el jugador entra en el ranking de puntajes, se debe registrar además de lo que se registra, la oleada a la que llego. Esto tambien debe mostrarse en la lista de ranking de puntajes
+
+## Prompt 24:
+> Incluye imagen de los personajes
+Considera la imagen entregada para los personajes, la cual contiene sprites de 4 posiciones (frente, espalda, derecha e izquierda) de varios personajes, eres capaz de hacer una animación con este sprite? Si es posible, quiero usar estas animaciones para el personaje.
+
+## Prompt 25:
+* Integrar el sprite sheet en el tablero.
+* Mostrar el personaje como una imagen (o fondo) en la celda correspondiente, en lugar del cuadrado azul.
+* Cambiar la dirección del sprite según la tecla presionada (izquierda/derecha), cuando no este moviendose mostrarlo de espalda, la vista de frente la usaremos para mostrar en el momento en que debo elegir un personaje de la lista, antes de iniciar el juego.
+* Hacer una animación simple alternando entre dos frames al moverse y una animación simple cuando el personaje está quieto.
+
+## Prompt 26:
+- Adjunto imagen de pantallazo con actual display de los sprite del personaje
+La selección de la sección del sprite no queda correctamente.
+He ajustado los archivos de sprites, ahora tenemos 3 archivos hero1.png, hero2.png y hero3.png, cado uno de ellos es de 64 x 256 pixel cada uno, cada archivo contiene los 4 sprites de un heroe, el primer cuadro de pixeles de 64x64 corresponde al heroe de espalda, el segundo cuadro de 64x64 corresponde a la postura a la izquierda, el tercer cuadro de 64x64 corresponde a la postura mirando de frente, y el cuarto cuadro de 64x64 corresponde a la postura a la derecha.
+Los archivos de sprites estan en la carpeta sprites.
+* Ajusta el código para que segun el personaje que elija el usuario en la ventana de selección, es el que mostrará en el tablero de juego.
+* En la pantalla de selección del personaje, se debe mostrar la postura de frente
+* Cuando inicia el juego y cuando está quieto, debe mostrar la postura de espalda
+* Cuando se mueve hacia la derecha durante el juego, debe mostrar la postura a la derecha
+* Cuando se mueve hacia la izquierda durante el juego, debe mostrar la postura a la izquierda
+* Crea una animación simple para cambiar entre los diferentes sprites durante el movimiento del juego

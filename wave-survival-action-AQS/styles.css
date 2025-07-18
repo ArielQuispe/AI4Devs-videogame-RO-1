@@ -20,7 +20,28 @@
 
 /* Colores para los elementos del juego */
 .celda.jugador {
-    background-color: blue;
+    background-color: transparent !important;
+    background-repeat: no-repeat;
+    background-size: 256px 256px; /* 4 frames horizontales, 64x64 cada uno */
+    image-rendering: pixelated;
+}
+
+.celda.jugador.sprite-back {
+    background-position: 0px 0px;
+}
+.celda.jugador.sprite-left {
+    background-position: -64px 0px;
+}
+.celda.jugador.sprite-front {
+    background-position: -128px 0px;
+}
+.celda.jugador.sprite-right {
+    background-position: -192px 0px;
+}
+
+/* Animación: alterna entre frame de dirección y frame de espalda */
+.celda.jugador.anim-move {
+    /* Se alterna la clase sprite-back y la de dirección en JS */
 }
 
 .celda.enemigo {
