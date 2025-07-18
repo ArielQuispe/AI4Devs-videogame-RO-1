@@ -309,3 +309,16 @@ Los archivos de sprites estan en la carpeta sprites.
 * Cuando se mueve hacia la derecha durante el juego, debe mostrar la postura a la derecha
 * Cuando se mueve hacia la izquierda durante el juego, debe mostrar la postura a la izquierda
 * Crea una animación simple para cambiar entre los diferentes sprites durante el movimiento del juego
+
+## Prompt 27: Corrección de imagenes
+Las imagenes no se están mostrando bien, considera esto:
+
+El sprite de cada heroe, tiene una dimensión de 64 pixeles horizontal, por 256 pixles vertical.
+El sprite completo tiene una disposición vertical
+Cada frame tiene una dimensión de 64 x 64
+Las posiciones de iniciales de cada frame en la imagen sprite son 0, 64, 128 y 192
+Ajusta el css y javascript para que las imagenes se vean correctamente
+
+## Prompt 28: Corrección de imagenes v2
+Perfecto, ahora si está funcionando correctamente la muestra de la imagen. Pero se muestra 2 veces el sprite de frente en el momento de seleccionar el heroe, debería mostrarse solo 1 vez.
+Correge ese comportamiento, para que en la selección de personaje se muestre solo 1 vez. No quites funcionalidades que no sean necesarias de eliminar.

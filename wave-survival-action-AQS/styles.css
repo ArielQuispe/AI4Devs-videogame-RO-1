@@ -22,7 +22,7 @@
 .celda.jugador {
     background-color: transparent !important;
     background-repeat: no-repeat;
-    background-size: 256px 256px; /* 4 frames horizontales, 64x64 cada uno */
+    background-size: 64px 256px; /* 1 columna, 4 filas de 64x64 */
     image-rendering: pixelated;
 }
 
@@ -30,13 +30,13 @@
     background-position: 0px 0px;
 }
 .celda.jugador.sprite-left {
-    background-position: -64px 0px;
+    background-position: 0px -64px;
 }
 .celda.jugador.sprite-front {
-    background-position: -128px 0px;
+    background-position: 0px -128px;
 }
 .celda.jugador.sprite-right {
-    background-position: -192px 0px;
+    background-position: 0px -192px;
 }
 
 /* Animación: alterna entre frame de dirección y frame de espalda */

@@ -56,22 +56,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // En selección de personaje, mostrar sprite de frente
-    // (esto se puede mejorar para que cambie según selección)
-    const selectorPersonaje = document.getElementById('selector-personaje');
-    const preview = document.createElement('div');
-    preview.style.width = '64px';
-    preview.style.height = '64px';
-    preview.style.margin = '0 auto 10px auto';
-    preview.style.backgroundRepeat = 'no-repeat';
-    preview.style.backgroundSize = '256px 256px';
-    document.getElementById('pantalla-seleccion').insertBefore(preview, selectorPersonaje.parentNode);
+    // En selección de personaje, mostrar sprite de frente SOLO UNA VEZ
+    let preview = document.getElementById('preview-personaje');
+    if (!preview) {
+        preview = document.createElement('div');
+        preview.id = 'preview-personaje';
+        preview.style.width = '64px';
+        preview.style.height = '64px';
+        preview.style.margin = '0 auto 10px auto';
+        preview.style.backgroundRepeat = 'no-repeat';
+        preview.style.backgroundSize = '64px 256px';
+        document.getElementById('pantalla-seleccion').insertBefore(preview, selectorPersonaje.parentNode);
+    }
     function updatePreview() {
         const idx = parseInt(selectorPersonaje.value, 10);
         personajeSprite = `hero${idx}.png`;
-        // Frame 3: mirando de frente (posición -128px 0)
         preview.style.backgroundImage = `url('sprites/${personajeSprite}')`;
-        preview.style.backgroundPosition = '-128px 0px';
+        preview.style.backgroundPosition = '0px -128px';
     }
     selectorPersonaje.addEventListener('change', updatePreview);
     updatePreview();
@@ -312,13 +313,13 @@ function renderTablero() {
             pos = '0px 0px';
         } else if (direccionJugador === 'left') {
             clase = 'sprite-left';
-            pos = '-64px 0px';
+            pos = '0px -64px';
         } else if (direccionJugador === 'front') {
             clase = 'sprite-front';
-            pos = '-128px 0px';
+            pos = '0px -128px';
         } else if (direccionJugador === 'right') {
             clase = 'sprite-right';
-            pos = '-192px 0px';
+            pos = '0px -192px';
         }
         // Animación: alterna entre frame de dirección y frame de espalda
         if (frameAnim && (direccionJugador === 'left' || direccionJugador === 'right')) {
@@ -328,7 +329,7 @@ function renderTablero() {
         celdaJugador.classList.add(clase);
         celdaJugador.style.backgroundImage = `url('sprites/${personajeSprite}')`;
         celdaJugador.style.backgroundPosition = pos;
-        celdaJugador.style.backgroundSize = '256px 256px';
+        celdaJugador.style.backgroundSize = '64px 256px';
         celdaJugador.textContent = '';
     }
 }
@@ -618,14 +619,14 @@ document.addEventListener('DOMContentLoaded', function() {
     preview.style.height = '64px';
     preview.style.margin = '0 auto 10px auto';
     preview.style.backgroundRepeat = 'no-repeat';
-    preview.style.backgroundSize = '256px 256px';
+    preview.style.backgroundSize = '64px 256px';
     document.getElementById('pantalla-seleccion').insertBefore(preview, selectorPersonaje.parentNode);
     function updatePreview() {
         const idx = parseInt(selectorPersonaje.value, 10);
         personajeSprite = `hero${idx}.png`;
-        // Frame 3: mirando de frente (posición -128px 0)
+        // Frame 3: mirando de frente (posición 0px -128px)
         preview.style.backgroundImage = `url('sprites/${personajeSprite}')`;
-        preview.style.backgroundPosition = '-128px 0px';
+        preview.style.backgroundPosition = '0px -128px';
     }
     selectorPersonaje.addEventListener('change', updatePreview);
     updatePreview();
