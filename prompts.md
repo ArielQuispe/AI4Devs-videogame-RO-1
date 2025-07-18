@@ -322,3 +322,12 @@ Ajusta el css y javascript para que las imagenes se vean correctamente
 ## Prompt 28: Corrección de imagenes v2
 Perfecto, ahora si está funcionando correctamente la muestra de la imagen. Pero se muestra 2 veces el sprite de frente en el momento de seleccionar el heroe, debería mostrarse solo 1 vez.
 Correge ese comportamiento, para que en la selección de personaje se muestre solo 1 vez. No quites funcionalidades que no sean necesarias de eliminar.
+
+## Prompt 29: Corrección de imagenes
+> Se ha reiniciado la ventana del chat, y se le entrega la carpeta de trabajo como contexto, ya que estaba entregando alucinaciones. 
+
+Es necesario realizar un ajuste en el tablero de juego.
+Si bien es capaz de mantener el personaje que se elige en la selección, y las animaciones si se están realizando. El sprite quede dentro del cuadrado que se usa como grilla para el movimiento del personaje.
+Se debe hacer que el sprite del personaje se vea completo, sin importar que el cuadrado de la grilla de posición sea más pequeño.
+* Hacer que el personaje se vea de forma completo el framde de 64 x 64
+* No es necesario ampliar el tamaño de la grilla, ya que esta es solo referencial de la posición

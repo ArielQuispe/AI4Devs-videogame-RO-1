@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // En selección de personaje, mostrar sprite de frente SOLO UNA VEZ
+    let selectorPersonaje = document.getElementById('selector-personaje');
     let preview = document.getElementById('preview-personaje');
     if (!preview) {
         preview = document.createElement('div');
@@ -306,31 +307,24 @@ function renderTablero() {
     if (celdaJugador) {
         celdaJugador.classList.add('jugador');
         celdaJugador.classList.remove('sprite-back', 'sprite-left', 'sprite-right', 'sprite-front', 'anim-move');
-        let pos = '0px 0px';
-        let clase = '';
-        if (direccionJugador === 'back') {
-            clase = 'sprite-back';
-            pos = '0px 0px';
-        } else if (direccionJugador === 'left') {
-            clase = 'sprite-left';
-            pos = '0px -64px';
-        } else if (direccionJugador === 'front') {
-            clase = 'sprite-front';
-            pos = '0px -128px';
-        } else if (direccionJugador === 'right') {
-            clase = 'sprite-right';
-            pos = '0px -192px';
-        }
+        // Dibujar jugador con sprite (nuevo método: div hijo .sprite-personaje)
+        // Eliminar cualquier sprite-personaje anterior
+        const oldSprite = celdaJugador.querySelector('.sprite-personaje');
+        if (oldSprite) celdaJugador.removeChild(oldSprite);
+        // Determinar clase de frame
+        let clase = 'sprite-back';
+        if (direccionJugador === 'left') clase = 'sprite-left';
+        else if (direccionJugador === 'right') clase = 'sprite-right';
+        else if (direccionJugador === 'front') clase = 'sprite-front';
         // Animación: alterna entre frame de dirección y frame de espalda
         if (frameAnim && (direccionJugador === 'left' || direccionJugador === 'right')) {
             clase = 'sprite-back';
-            pos = '0px 0px';
         }
-        celdaJugador.classList.add(clase);
-        celdaJugador.style.backgroundImage = `url('sprites/${personajeSprite}')`;
-        celdaJugador.style.backgroundPosition = pos;
-        celdaJugador.style.backgroundSize = '64px 256px';
-        celdaJugador.textContent = '';
+        // Crear el div del sprite
+        const spriteDiv = document.createElement('div');
+        spriteDiv.className = `sprite-personaje ${clase}` + (frameAnim ? ' anim-move' : '');
+        spriteDiv.style.backgroundImage = `url('sprites/${personajeSprite}')`;
+        celdaJugador.appendChild(spriteDiv);
     }
 }
 
@@ -565,69 +559,4 @@ window.addEventListener('keydown', (event) => {
             atacarEnemigo();
             break;
     }
-});
-
-// Eliminar la declaración duplicada de intervaloJuego
-// const intervaloJuego = setInterval(tickJuego, 1000);
-
-// --- MANEJO DE PANTALLAS Y BOTONES ---
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Botón Iniciar Juego Nuevo
-    const btnIniciar = document.querySelector('#pantalla-menu .btn-primary');
-    if (btnIniciar) {
-        btnIniciar.addEventListener('click', () => {
-            document.getElementById('pantalla-menu').style.display = 'none';
-            document.getElementById('pantalla-seleccion').style.display = 'block';
-        });
-    }
-
-    // Botón Ver Puntajes
-    const btnPuntajes = document.querySelector('#pantalla-menu .btn-secondary');
-    if (btnPuntajes) {
-        btnPuntajes.addEventListener('click', () => {
-            document.getElementById('pantalla-menu').style.display = 'none';
-            document.getElementById('pantalla-puntajes').style.display = 'block';
-            mostrarPuntajes();
-        });
-    }
-
-    // Botón Iniciar Juego en selección de personaje
-    const btnIniciarJuego = document.querySelector('#pantalla-seleccion .btn-success');
-    if (btnIniciarJuego) {
-        btnIniciarJuego.addEventListener('click', () => {
-            document.getElementById('pantalla-seleccion').style.display = 'none';
-            document.getElementById('pantalla-juego').style.display = 'block';
-            iniciarJuego();
-        });
-    }
-
-    // Botón Volver al Menú en pantalla de puntajes
-    const btnVolverMenu = document.querySelector('#pantalla-puntajes .btn-secondary');
-    if (btnVolverMenu) {
-        btnVolverMenu.addEventListener('click', () => {
-            document.getElementById('pantalla-puntajes').style.display = 'none';
-            document.getElementById('pantalla-menu').style.display = 'block';
-        });
-    }
-
-    // En selección de personaje, mostrar sprite de frente
-    // (esto se puede mejorar para que cambie según selección)
-    const selectorPersonaje = document.getElementById('selector-personaje');
-    const preview = document.createElement('div');
-    preview.style.width = '64px';
-    preview.style.height = '64px';
-    preview.style.margin = '0 auto 10px auto';
-    preview.style.backgroundRepeat = 'no-repeat';
-    preview.style.backgroundSize = '64px 256px';
-    document.getElementById('pantalla-seleccion').insertBefore(preview, selectorPersonaje.parentNode);
-    function updatePreview() {
-        const idx = parseInt(selectorPersonaje.value, 10);
-        personajeSprite = `hero${idx}.png`;
-        // Frame 3: mirando de frente (posición 0px -128px)
-        preview.style.backgroundImage = `url('sprites/${personajeSprite}')`;
-        preview.style.backgroundPosition = '0px -128px';
-    }
-    selectorPersonaje.addEventListener('change', updatePreview);
-    updatePreview();
 });

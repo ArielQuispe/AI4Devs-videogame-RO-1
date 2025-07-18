@@ -19,28 +19,46 @@
 }
 
 /* Colores para los elementos del juego */
+
+/* Ajuste para que el sprite del jugador sobresalga y se vea completo */
 .celda.jugador {
-    background-color: transparent !important;
-    background-repeat: no-repeat;
-    background-size: 64px 256px; /* 1 columna, 4 filas de 64x64 */
-    image-rendering: pixelated;
+    position: relative;
+    overflow: visible;
+    background: none !important;
 }
 
-.celda.jugador.sprite-back {
+.sprite-personaje {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 64px;
+    height: 64px;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
+    background-size: 64px 256px;
+    image-rendering: pixelated;
+    pointer-events: none;
+    z-index: 2;
+}
+
+
+/* Las siguientes clases se aplicarán al div .sprite-personaje */
+.sprite-back {
     background-position: 0px 0px;
 }
-.celda.jugador.sprite-left {
+.sprite-left {
     background-position: 0px -64px;
 }
-.celda.jugador.sprite-front {
+.sprite-front {
     background-position: 0px -128px;
 }
-.celda.jugador.sprite-right {
+.sprite-right {
     background-position: 0px -192px;
 }
 
+
 /* Animación: alterna entre frame de dirección y frame de espalda */
-.celda.jugador.anim-move {
+.sprite-personaje.anim-move {
     /* Se alterna la clase sprite-back y la de dirección en JS */
 }
 
