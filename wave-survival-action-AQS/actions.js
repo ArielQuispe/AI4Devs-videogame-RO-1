@@ -320,15 +320,30 @@ function renderTablero() {
     enemigos.forEach(e => {
         const celda = document.getElementById(`celda-${e.fila}-${e.columna}`);
         if (celda) {
+            celda.classList.add('enemigo');
+            // Eliminar cualquier sprite-enemigo anterior
             if (e.jefe) {
-                celda.classList.add('jefe');
-                celda.style.backgroundColor = JEFE_COLOR;
-                celda.textContent = e.hp;
-            } else {
-                celda.classList.add('enemigo');
-                celda.style.backgroundColor = 'red';
-                celda.textContent = e.hp;
+                const oldSprite = celda.querySelector('.sprite-enemigo-jefe');
+                if (oldSprite) celda.removeChild(oldSprite);
             }
+            else{
+                const oldSprite = celda.querySelector('.sprite-enemigo');
+                if (oldSprite) celda.removeChild(oldSprite);
+            }
+            
+            // Determinar sprite según tipo
+            let sprite = e.jefe ? 'boss1.png' : 'enemy1.png';
+            // Crear el div del sprite
+            const spriteDiv = document.createElement('div');
+            if (e.jefe) {
+                celda.style.backgroundColor = JEFE_COLOR;
+                spriteDiv.className = 'sprite-enemigo-jefe anim-enemigo-boss';
+            }
+            else{
+                spriteDiv.className = 'sprite-enemigo anim-enemigo-flip';
+            }
+            spriteDiv.style.backgroundImage = `url('sprites/${sprite}')`;
+            celda.appendChild(spriteDiv);
         }
     });
     // Dibujar jugador con sprite

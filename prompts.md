@@ -341,3 +341,9 @@ He agregado 2 nuevos sprites buff-ATK.png y buff-HP.png, esto corresponden a los
 > Se dieron algunos problemas en el código generado, que fui arreglando con instrucciones simples, finalmente no implemente el giro, ya que me dio algunos problemas con el renderizado del tablero
 
 ## Prompt 31: 
+He agregado dos sprites más enemy1.png y boss1.png, estos corresponden a los sprites de los enemigos normales y los enemigos tipo boss respectivamente.
+* Debe mostrarse el sprite que corresponda al tipo de enemigo al momento de generarse
+* En cada tick, el sprite del cualquiera de los enemigos, debe girarse sobre su centro vertical, de modo que la imagen quede en espejo y genere el efecto que el enemigo esta caminando.
+* Si el tamaño del sprite es más grande que el cuadrado de la cuadrícula, este debe quedar por encima del cuadrado, de la misma forma que hicimos con los sprites del heroe
+* Agrego los estilos css que sean necesarios en el archivo style.css
+* Corrige lo que sea necesario en actions.js para lograr la incoporación de esta animación
