@@ -1,10 +1,30 @@
 // Valores de configuración del juego
-const ENEMIGO_HP = 3; // Vida de cada enemigo
-const PUNTAJE_ENEMIGO = 1; // Puntaje por eliminar enemigo
-const JEFE_HP = 20; // Vida de cada jefe
-const JEFE_DANO = 20; // Daño que realiza el jefe
-const JEFE_COLOR = '#8B0000'; // Rojo oscuro para jefe
-const JEFE_RANGO_FILA = 11; // Fila donde el jefe se detiene y ataca
+const ENEMIGOS = [
+  {
+    tipo: 'normal',
+    nombre: 'Enemigo',
+    hp: 3,
+    atk: 10,
+    puntaje: 1,
+    sprite: 'enemy1.png',
+    color: '#bb0404ff',
+    rango_fila: 13,
+    ancho: 48,
+    alto: 48
+  },
+  {
+    tipo: 'jefe',
+    nombre: 'Jefe',
+    hp: 20,
+    atk: 20,
+    puntaje: 10,
+    sprite: 'boss1.png',
+    color: '#8B0000',
+    rango_fila: 11,
+    ancho: 96,
+    alto: 96
+  }
+];
 const BUFFS = [
   { tipo: 'HP', texto: 'HP' },
   { tipo: 'ATK', texto: 'ATK' }

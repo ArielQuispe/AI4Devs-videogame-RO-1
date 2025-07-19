@@ -84,19 +84,6 @@
     pointer-events: none;
     z-index: 2;
 }
-.sprite-enemigo-jefe {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 96px;
-    height: 96px;
-    transform: translate(-50%, -50%);
-    background-repeat: no-repeat;
-    background-size: 96px 96px;
-    image-rendering: pixelated;
-    pointer-events: none;
-    z-index: 2;
-}
 
 /* Animación de giro espejo (flip horizontal) */
 .anim-enemigo-flip {

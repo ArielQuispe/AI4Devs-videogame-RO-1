@@ -347,3 +347,10 @@ He agregado dos sprites más enemy1.png y boss1.png, estos corresponden a los sp
 * Si el tamaño del sprite es más grande que el cuadrado de la cuadrícula, este debe quedar por encima del cuadrado, de la misma forma que hicimos con los sprites del heroe
 * Agrego los estilos css que sean necesarios en el archivo style.css
 * Corrige lo que sea necesario en actions.js para lograr la incoporación de esta animación
+
+## Prompt 32:
+Hay que encapsular los valores asociados de los enemigos, como se hace con los buff, es decir usando un array de objetos.
+* Analiza como están definidos los buffs
+* Replica la logica de encapsularlo en un array de objeto
+* Considera que los enemigos tienen otro tipo de valores, como HP, ATK y otras propiedades
+* Refactoriza el código en actions.js para que refleje el cambip en como se administran los datos de los enemigos luego de este cambio

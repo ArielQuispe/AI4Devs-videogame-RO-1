@@ -199,7 +199,7 @@ function atacarEnemigo() {
             reproducirSonidoAtaqueJugador();
             if (enemigo.hp <= 0) {
                 enemigos = enemigos.filter(e => e !== enemigo);
-                puntaje += enemigo.jefe ? 10 : PUNTAJE_ENEMIGO;
+                puntaje += enemigo.puntaje || 1;
                 reproducirSonidoEliminarEnemigo();
             }
             renderTablero();
@@ -239,7 +239,6 @@ function generarOleada(oleadaNumero) {
         const cantidadJefes = Math.floor(oleadaNumero / 10);
         let columnasDisponibles = [0,1,2,3,4];
         for (let i = 0; i < cantidadJefes; i++) {
-            // Distribuir jefes en columnas distintas si es posible
             let columna;
             if (columnasDisponibles.length > 0) {
                 const idx = Math.floor(Math.random() * columnasDisponibles.length);
@@ -247,7 +246,20 @@ function generarOleada(oleadaNumero) {
             } else {
                 columna = Math.floor(Math.random() * 5);
             }
-            enemigos.push({ fila: 0, columna, hp: JEFE_HP, jefe: true });
+            const jefeData = ENEMIGOS.find(e => e.tipo === 'jefe');
+            enemigos.push({
+                fila: 0,
+                columna,
+                tipo: 'jefe',
+                hp: jefeData.hp,
+                atk: jefeData.atk,
+                puntaje: jefeData.puntaje,
+                sprite: jefeData.sprite,
+                color: jefeData.color,
+                rango_fila: jefeData.rango_fila,
+                ancho: jefeData.ancho,
+                alto: jefeData.alto
+            });
         }
         alertaJefePendiente = true;
     } else {
@@ -256,7 +268,18 @@ function generarOleada(oleadaNumero) {
             const fila = Math.floor(Math.random() * 5);
             const columna = Math.floor(Math.random() * 5);
             if (!enemigos.some(e => e.fila === fila && e.columna === columna)) {
-                enemigos.push({ fila, columna, hp: ENEMIGO_HP, jefe: false });
+                const enemigoData = ENEMIGOS.find(e => e.tipo === 'normal');
+                enemigos.push({
+                    fila,
+                    columna,
+                    tipo: 'normal',
+                    hp: enemigoData.hp,
+                    atk: enemigoData.atk,
+                    puntaje: enemigoData.puntaje,
+                    sprite: enemigoData.sprite,
+                    ancho: enemigoData.ancho,
+                    alto: enemigoData.alto
+                });
             }
         }
         generarBuffs();
@@ -322,27 +345,16 @@ function renderTablero() {
         if (celda) {
             celda.classList.add('enemigo');
             // Eliminar cualquier sprite-enemigo anterior
-            if (e.jefe) {
-                const oldSprite = celda.querySelector('.sprite-enemigo-jefe');
-                if (oldSprite) celda.removeChild(oldSprite);
-            }
-            else{
-                const oldSprite = celda.querySelector('.sprite-enemigo');
-                if (oldSprite) celda.removeChild(oldSprite);
-            }
-            
-            // Determinar sprite según tipo
-            let sprite = e.jefe ? 'boss1.png' : 'enemy1.png';
-            // Crear el div del sprite
+            const oldSprite = celda.querySelector('.sprite-enemigo');
+            if (oldSprite) celda.removeChild(oldSprite);
+            // Usar propiedades del objeto enemigo
             const spriteDiv = document.createElement('div');
-            if (e.jefe) {
-                celda.style.backgroundColor = JEFE_COLOR;
-                spriteDiv.className = 'sprite-enemigo-jefe anim-enemigo-boss';
-            }
-            else{
-                spriteDiv.className = 'sprite-enemigo anim-enemigo-flip';
-            }
-            spriteDiv.style.backgroundImage = `url('sprites/${sprite}')`;
+            spriteDiv.className = 'sprite-enemigo anim-enemigo-flip';
+            spriteDiv.style.backgroundImage = `url('sprites/${e.sprite}')`;
+            spriteDiv.style.width = (e.ancho || 48) + 'px';
+            spriteDiv.style.height = (e.alto || 48) + 'px';
+            if (e.color) celda.style.backgroundColor = e.color;
+            else celda.style.backgroundColor = '';
             celda.appendChild(spriteDiv);
         }
     });
@@ -406,13 +418,9 @@ function tickJuego() {
     }
     // Mover enemigos
     enemigos.forEach(e => {
-        if (e.jefe) {
-            // Jefe solo baja hasta fila 11
-            if (e.fila < JEFE_RANGO_FILA) e.fila++;
-        } else {
-            // Enemigo normal baja hasta fila 13
-            if (e.fila < 13) e.fila++;
-        }
+        // Si el enemigo tiene rango_fila, baja hasta ese valor, si no hasta 13
+        const limite = (typeof e.rango_fila === 'number') ? e.rango_fila : 13;
+        if (e.fila < limite) e.fila++;
     });
     // Mover buffs (hasta fila 14, SIEMPRE bajan aunque haya enemigo)
     buffs.forEach(b => {
@@ -437,18 +445,11 @@ function tickJuego() {
     // Ataque de enemigos al jugador
     let enemigoAtaco = false;
     enemigos.forEach(e => {
-        if (e.jefe) {
-            // Jefe ataca si está en fila >= JEFE_RANGO_FILA
-            if (e.fila >= JEFE_RANGO_FILA) {
-                salud -= JEFE_DANO;
-                enemigoAtaco = true;
-            }
-        } else {
-            // Enemigo normal ataca si está en fila 13
-            if (e.fila === 13) {
-                salud -= 10;
-                enemigoAtaco = true;
-            }
+        // Si el enemigo tiene rango_fila, ataca cuando está en esa fila o más
+        const fila = (typeof e.rango_fila === 'number') ? e.rango_fila : 13;
+        if (e.fila === fila) {
+            salud -= e.atk;
+            enemigoAtaco = true;
         }
     });
     if (enemigoAtaco) {
