@@ -12,7 +12,7 @@
 
 /* Estilos para las celdas */
 .celda {
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     width: 100%;
     aspect-ratio: 1 / 1; /* Mantener las celdas cuadradas */
     box-sizing: border-box;
@@ -75,11 +75,10 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 48px;
-    height: 48px;
+    /* width y height se definen dinámicamente desde JS */
+    /* background-size se define dinámicamente desde JS */
     transform: translate(-50%, -50%);
     background-repeat: no-repeat;
-    background-size: 48px 48px;
     image-rendering: pixelated;
     pointer-events: none;
     z-index: 2;

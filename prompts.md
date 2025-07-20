@@ -354,3 +354,16 @@ Hay que encapsular los valores asociados de los enemigos, como se hace con los b
 * Replica la logica de encapsularlo en un array de objeto
 * Considera que los enemigos tienen otro tipo de valores, como HP, ATK y otras propiedades
 * Refactoriza el código en actions.js para que refleje el cambip en como se administran los datos de los enemigos luego de este cambio
+
+# Prompt 33:
+# Condición actual
+Hay que ajustar la forma de disparo del jugador, ya que está ocurriendo lo siguiente:
+* Cada vez que se presiona la tecla espacio, se genera un dispado.
+* Si se mantiene presionada la tecla espacio, se generan disparos consecutivos sin parar
+# Condición deseada
+* Sin importar la forma en que se genere un disparo, debe considerar la existencia de un cooldown antes de ejecutar un disparo, si la habilidad de disparo está en cooldown, no ejecuta el disparo
+* Para que el jugador entienda lo que pasa, se debe agregar una animación entre el heroe y el enemigo que está atacando, la animación se realiza solo cuando se ejecuta un disparo
+* El valor de cooldown del disparo, debe ser una propiedad de un objeto llamado jugador, que se debe almacenar en values.js
+* Se debe encapsular el resto de las propiedades del jugador, como su poder de ataque, su vida máxima, su vida actual y otras que estén definidas en la lógica actual
+* Los eventos en actions.js deben leer desde ese objeto definido en values.js
+* Considerar al momento de dibujar la animación del disparo, que el proyectil que se dibuje, será diferente según el tipo de personaje que se haya elegido. Para una primera versión esta animación debe ser un punto negro

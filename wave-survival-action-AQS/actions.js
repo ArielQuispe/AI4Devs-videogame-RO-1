@@ -1,20 +1,11 @@
 // Variables para la posición del jugador
-let jugadorFila = 14;
-let jugadorColumna = 2;
-
-// Variables de estado
-let puntaje = 0;
-let salud = 100;
-let oleadaNumero = 1;
-
-// Variable para el daño del jugador
-let poderJugador = 1;
+// Se asume que values.js ya está cargado antes que este script
+let jugadorFila = JUGADOR.filaInicial;
+let jugadorColumna = JUGADOR.columnaInicial;
 
 // Variables para animación de sprite
-let direccionJugador = 'back'; // 'back', 'left', 'right', 'front'
 let frameAnim = false;
 let animInterval = null;
-let personajeSprite = 'hero1.png'; // Por defecto
 
 // --- Selección de personaje y preview ---
 document.addEventListener('DOMContentLoaded', function() {
@@ -43,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnIniciarJuego.addEventListener('click', () => {
             document.getElementById('pantalla-seleccion').style.display = 'none';
             document.getElementById('pantalla-juego').style.display = 'block';
+            JUGADOR.nombre = document.getElementById('nombre-jugador') ? document.getElementById('nombre-jugador').value : 'Jugador Anonimo';
             iniciarJuego();
         });
     }
@@ -71,8 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function updatePreview() {
         const idx = parseInt(selectorPersonaje.value, 10);
-        personajeSprite = `hero${idx}.png`;
-        preview.style.backgroundImage = `url('sprites/${personajeSprite}')`;
+        JUGADOR.sprite = `hero${idx}.png`;
+        preview.style.backgroundImage = `url('sprites/${JUGADOR.sprite}')`;
         preview.style.backgroundPosition = '0px -128px';
     }
     selectorPersonaje.addEventListener('change', updatePreview);
@@ -122,17 +114,17 @@ function moverJugador(direccion) {
     let movio = false;
     if (direccion === 'izquierda' && jugadorColumna > minColumnas) {
         jugadorColumna--;
-        direccionJugador = 'left';
+        JUGADOR.direccion = 'left';
         movio = true;
     } else if (direccion === 'derecha' && jugadorColumna < maxColumnas) {
         jugadorColumna++;
-        direccionJugador = 'right';
+        JUGADOR.direccion = 'right';
         movio = true;
     }
     if (movio) {
-        animarMovimiento(direccionJugador);
+        animarMovimiento(JUGADOR.direccion);
     } else {
-        direccionJugador = 'back';
+        JUGADOR.direccion = 'back';
         frameAnim = false;
         renderTablero();
         iniciarAnimacionIdle();
@@ -192,14 +184,18 @@ function mostrarAlertaJefe(callback) {
 
 // Función para atacar al enemigo más cercano en la misma columna
 function atacarEnemigo() {
+    if (!JUGADOR.puedeDisparar) return;
+    JUGADOR.puedeDisparar = false;
+    setTimeout(() => { JUGADOR.puedeDisparar = true; }, JUGADOR.cooldownDisparo);
     for (let fila = jugadorFila - 1; fila >= 0; fila--) {
         const enemigo = enemigos.find(e => e.fila === fila && e.columna === jugadorColumna);
         if (enemigo) {
-            enemigo.hp -= poderJugador;
+            animarDisparo(jugadorFila, jugadorColumna, enemigo.fila, enemigo.columna);
+            enemigo.hp -= JUGADOR.poder;
             reproducirSonidoAtaqueJugador();
             if (enemigo.hp <= 0) {
                 enemigos = enemigos.filter(e => e !== enemigo);
-                puntaje += enemigo.puntaje || 1;
+                JUGADOR.puntaje += enemigo.puntaje || 1;
                 reproducirSonidoEliminarEnemigo();
             }
             renderTablero();
@@ -248,17 +244,9 @@ function generarOleada(oleadaNumero) {
             }
             const jefeData = ENEMIGOS.find(e => e.tipo === 'jefe');
             enemigos.push({
+                ...jefeData,
                 fila: 0,
-                columna,
-                tipo: 'jefe',
-                hp: jefeData.hp,
-                atk: jefeData.atk,
-                puntaje: jefeData.puntaje,
-                sprite: jefeData.sprite,
-                color: jefeData.color,
-                rango_fila: jefeData.rango_fila,
-                ancho: jefeData.ancho,
-                alto: jefeData.alto
+                columna
             });
         }
         alertaJefePendiente = true;
@@ -270,15 +258,9 @@ function generarOleada(oleadaNumero) {
             if (!enemigos.some(e => e.fila === fila && e.columna === columna)) {
                 const enemigoData = ENEMIGOS.find(e => e.tipo === 'normal');
                 enemigos.push({
+                    ...enemigoData,
                     fila,
-                    columna,
-                    tipo: 'normal',
-                    hp: enemigoData.hp,
-                    atk: enemigoData.atk,
-                    puntaje: enemigoData.puntaje,
-                    sprite: enemigoData.sprite,
-                    ancho: enemigoData.ancho,
-                    alto: enemigoData.alto
+                    columna
                 });
             }
         }
@@ -353,6 +335,7 @@ function renderTablero() {
             spriteDiv.style.backgroundImage = `url('sprites/${e.sprite}')`;
             spriteDiv.style.width = (e.ancho || 48) + 'px';
             spriteDiv.style.height = (e.alto || 48) + 'px';
+            spriteDiv.style.backgroundSize = `${e.ancho || 48}px ${e.alto || 48}px`;
             if (e.color) celda.style.backgroundColor = e.color;
             else celda.style.backgroundColor = '';
             celda.appendChild(spriteDiv);
@@ -369,17 +352,17 @@ function renderTablero() {
         if (oldSprite) celdaJugador.removeChild(oldSprite);
         // Determinar clase de frame
         let clase = 'sprite-back';
-        if (direccionJugador === 'left') clase = 'sprite-left';
-        else if (direccionJugador === 'right') clase = 'sprite-right';
-        else if (direccionJugador === 'front') clase = 'sprite-front';
+        if (JUGADOR.direccion === 'left') clase = 'sprite-left';
+        else if (JUGADOR.direccion === 'right') clase = 'sprite-right';
+        else if (JUGADOR.direccion === 'front') clase = 'sprite-front';
         // Animación: alterna entre frame de dirección y frame de espalda
-        if (frameAnim && (direccionJugador === 'left' || direccionJugador === 'right')) {
+        if (frameAnim && (JUGADOR.direccion === 'left' || JUGADOR.direccion === 'right')) {
             clase = 'sprite-back';
         }
         // Crear el div del sprite
         const spriteDiv = document.createElement('div');
         spriteDiv.className = `sprite-personaje ${clase}` + (frameAnim ? ' anim-move' : '');
-        spriteDiv.style.backgroundImage = `url('sprites/${personajeSprite}')`;
+        spriteDiv.style.backgroundImage = `url('sprites/${JUGADOR.sprite}')`;
         celdaJugador.appendChild(spriteDiv);
     }
 }
@@ -389,11 +372,11 @@ let juegoEnCurso = false;
 
 // Función para actualizar la UI
 function actualizarUI() {
-    document.getElementById('indicador-puntaje').textContent = puntaje;
-    document.getElementById('indicador-salud').textContent = salud;
-    document.getElementById('indicador-oleada').textContent = oleadaNumero;
+    document.getElementById('indicador-puntaje').textContent = JUGADOR.puntaje;
+    document.getElementById('indicador-salud').textContent = JUGADOR.vida;
+    document.getElementById('indicador-oleada').textContent = JUGADOR.oleada;
     if (document.getElementById('indicador-poder')) {
-        document.getElementById('indicador-poder').textContent = poderJugador;
+        document.getElementById('indicador-poder').textContent = JUGADOR.poder;
     }
 }
 
@@ -431,8 +414,8 @@ function tickJuego() {
     // Colisiones buffs con jugador y eliminación en la fila inferior
     buffs = buffs.filter(b => {
         if (b.fila === jugadorFila && b.columna === jugadorColumna) {
-            if (b.tipo === 'HP') salud = Math.min(100, salud + 10);
-            if (b.tipo === 'ATK') poderJugador++;
+            if (b.tipo === 'HP') JUGADOR.vida = Math.min(JUGADOR.vidaMax, JUGADOR.vida + 10);
+            if (b.tipo === 'ATK') JUGADOR.poder++;
             reproducirSonidoRecogerBuff();
             return false;
         }
@@ -448,7 +431,7 @@ function tickJuego() {
         // Si el enemigo tiene rango_fila, ataca cuando está en esa fila o más
         const fila = (typeof e.rango_fila === 'number') ? e.rango_fila : 13;
         if (e.fila === fila) {
-            salud -= e.atk;
+            JUGADOR.vida -= e.atk;
             enemigoAtaco = true;
         }
     });
@@ -461,8 +444,8 @@ function tickJuego() {
     actualizarUI();
     renderTablero();
     // Verificar condiciones de final de oleada o juego
-    if (salud <= 0) {
-        salud = 0;
+    if (JUGADOR.vida <= 0) {
+        JUGADOR.vida = 0;
         juegoEnCurso = false;
         reproducirSonidoGameOver();
         mostrarGameOver();
@@ -470,12 +453,12 @@ function tickJuego() {
     }
     if (enemigos.length === 0) {
         // Si fue una oleada de jefe, aumentar velocidad
-        if (oleadaNumero % 10 === 0) {
+        if (JUGADOR.oleada % 10 === 0) {
             velocidadTick = Math.max(velocidadTick - 50, 100); // No menos de 100ms
             iniciarIntervaloJuego();
         }
-        oleadaNumero++;
-        generarOleada(oleadaNumero);
+        JUGADOR.oleada++;
+        generarOleada(JUGADOR.oleada);
     }
 }
 
@@ -484,11 +467,10 @@ function mostrarGameOver() {
     document.getElementById('pantalla-juego').style.display = 'none';
     document.getElementById('pantalla-gameover').style.display = 'block';
     // Revisar si el puntaje entra al ranking y guardar si corresponde
-    const nombre = document.getElementById('nombre-jugador') ? document.getElementById('nombre-jugador').value : 'Jugador';
     let puntajes = cargarPuntajes();
     let ranking = false;
-    if (puntajes.length < 10 || puntaje > puntajes[puntajes.length - 1].score) {
-        guardarPuntaje(nombre, puntaje, oleadaNumero);
+    if (puntajes.length < 10 || JUGADOR.puntaje > puntajes[puntajes.length - 1].score) {
+        guardarPuntaje(JUGADOR.nombre, JUGADOR.puntaje, JUGADOR.oleada);
         ranking = true;
         puntajes = cargarPuntajes(); // recargar para mostrar actualizado
     }
@@ -563,7 +545,7 @@ function animarMovimiento(direccion) {
         if (ticks > 3) { // 3 ciclos de animación
             clearInterval(animInterval);
             frameAnim = false;
-            direccionJugador = 'back';
+            JUGADOR.direccion = 'back';
             renderTablero();
             iniciarAnimacionIdle();
             
@@ -574,25 +556,27 @@ function animarMovimiento(direccion) {
 // Función para iniciar el juego
 function iniciarJuego() {
     juegoEnCurso = true;
-    puntaje = 0;
-    salud = 100;
-    poderJugador = 1;
-    oleadaNumero = 1;
+    JUGADOR.puntaje = 0;
+    JUGADOR.vida = JUGADOR.vidaMax;
+    JUGADOR.oleada = 1;
     enemigos = [];
     velocidadTick = 1000;
-    direccionJugador = 'back';
+    JUGADOR.direccion = 'back';
+    JUGADOR.poder = 1;
+    JUGADOR.puedeDisparar = true;
     frameAnim = false;
     iniciarIntervaloJuego();
     iniciarAnimacionIdle();
     // buffs no se reinician
     initTablero();
-    generarOleada(oleadaNumero);
+    generarOleada(JUGADOR.oleada);
     actualizarUI();
     console.log('Juego iniciado.');
 }
 
 // Listeners para las teclas
 window.addEventListener('keydown', (event) => {
+    if (!juegoEnCurso) return;
     switch (event.key) {
         case 'ArrowLeft':
             moverJugador('izquierda');
@@ -601,7 +585,55 @@ window.addEventListener('keydown', (event) => {
             moverJugador('derecha');
             break;
         case ' ':
-            atacarEnemigo();
+            if (JUGADOR.puedeDisparar){
+                atacarEnemigo();
+            }
             break;
     }
 });
+
+
+// Animación de disparo (proyectil simple)
+function animarDisparo(filaInicio, colInicio, filaFin, colFin) {
+    const tablero = document.getElementById('tablero');
+    if (!tablero) return;
+    // Calcular posición de inicio y fin RELATIVAS al tablero
+    const celdaInicio = document.getElementById(`celda-${filaInicio}-${colInicio}`);
+    const celdaFin = document.getElementById(`celda-${filaFin}-${colFin}`);
+    if (!celdaInicio || !celdaFin) return;
+    // Crear proyectil
+    const proyectil = document.createElement('div');
+    proyectil.className = 'proyectil-disparo';
+    proyectil.style.position = 'absolute';
+    proyectil.style.width = '10px';
+    proyectil.style.height = '10px';
+    proyectil.style.borderRadius = '50%';
+    proyectil.style.background = 'black';
+    proyectil.style.zIndex = 10;
+    const rectInicio = celdaInicio.getBoundingClientRect();
+    const rectFin = celdaFin.getBoundingClientRect();
+    const leftInicio = rectInicio.left  + rectInicio.width/2 - 5;
+    const topInicio = rectInicio.top  + rectInicio.height/2 - 5;
+    const leftFin = rectFin.left  + rectFin.width/2 - 5;
+    const topFin = rectFin.top + rectFin.height/2 - 5;
+    proyectil.style.left = leftInicio + 'px';
+    proyectil.style.top = topInicio + 'px';
+    tablero.appendChild(proyectil);
+    // Animar hacia la celda destino
+    proyectil.animate([
+        {
+            left: leftInicio + 'px',
+            top: topInicio + 'px'
+        },
+        {
+            left: leftFin + 'px',
+            top: topFin + 'px'
+        }
+    ], {
+        duration: 200,
+        easing: 'linear'
+    });
+    setTimeout(() => {
+        if (proyectil.parentNode) proyectil.parentNode.removeChild(proyectil);
+    }, 200);
+}

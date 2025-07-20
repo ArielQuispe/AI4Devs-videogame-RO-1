@@ -9,8 +9,8 @@ const ENEMIGOS = [
     sprite: 'enemy1.png',
     color: '#bb0404ff',
     rango_fila: 13,
-    ancho: 48,
-    alto: 48
+    ancho: 64,
+    alto: 64
   },
   {
     tipo: 'jefe',
@@ -21,11 +21,27 @@ const ENEMIGOS = [
     sprite: 'boss1.png',
     color: '#8B0000',
     rango_fila: 11,
-    ancho: 96,
-    alto: 96
+    ancho: 128,
+    alto: 128
   }
 ];
 const BUFFS = [
   { tipo: 'HP', texto: 'HP' },
   { tipo: 'ATK', texto: 'ATK' }
 ];
+
+// Configuración del jugador principal
+const JUGADOR = {
+  oleada: 1,
+  nombre: 'Jugador',
+  vidaMax: 100,
+  vida: 100,
+  poder: 1,
+  puntaje: 0,
+  cooldownDisparo: 300, // ms
+  puedeDisparar: true,
+  sprite: 'hero1.png', // se actualiza según selección
+  columnaInicial: 2,
+  filaInicial: 14,
+  direccion: 'back' // 'back', 'left', 'right', 'front'
+};
