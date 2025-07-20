@@ -52,5 +52,5 @@ const TABLERO = {
   anchoCelda: 48,
   altoCelda: 32,
   oleadaInicial: 1,
-  oleadaJefe: 5
+  oleadaJefe: 10
 }

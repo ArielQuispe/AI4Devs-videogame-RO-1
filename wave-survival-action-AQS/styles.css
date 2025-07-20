@@ -40,7 +40,8 @@
     border: none;
     background: transparent;
     position: relative;
-    z-index: 2;
+    z-index: 1;
+    overflow: visible !important;
 }
 
 /* Camino central */
@@ -72,7 +73,7 @@
 /* Ajuste para que el sprite del jugador sobresalga y se vea completo */
 .celda.jugador {
     position: relative;
-    overflow: visible;
+    overflow: visible !important;
     background: none !important;
     z-index: 60;
 }
@@ -123,7 +124,7 @@
 /* Ajuste para que el sprite del enemigo sobresalga y se vea completo */
 .celda.enemigo {
     position: relative;
-    overflow: visible;
+    overflow: visible !important;
     background: none !important;
 }
 
@@ -209,7 +210,7 @@ h1, h2, h3, h4, h5 {
 
 .celda.buff {
     position: relative;
-    overflow: visible;
+    overflow: visible !important;
     background: none !important;
 }
 
