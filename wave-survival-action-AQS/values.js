@@ -8,7 +8,7 @@ const ENEMIGOS = [
     puntaje: 1,
     sprite: 'enemy1.png',
     color: '#bb0404ff',
-    rango_fila: 13,
+    rango_fila: 12,
     ancho: 64,
     alto: 64
   },
@@ -20,7 +20,7 @@ const ENEMIGOS = [
     puntaje: 10,
     sprite: 'boss1.png',
     color: '#8B0000',
-    rango_fila: 11,
+    rango_fila: 10,
     ancho: 128,
     alto: 128
   }
@@ -45,3 +45,12 @@ const JUGADOR = {
   filaInicial: 14,
   direccion: 'back' // 'back', 'left', 'right', 'front'
 };
+
+const TABLERO = {
+  filas: 15,
+  columnas: 5,
+  anchoCelda: 48,
+  altoCelda: 32,
+  oleadaInicial: 1,
+  oleadaJefe: 5
+}

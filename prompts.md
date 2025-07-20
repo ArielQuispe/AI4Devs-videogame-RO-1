@@ -367,3 +367,15 @@ Hay que ajustar la forma de disparo del jugador, ya que está ocurriendo lo sigu
 * Se debe encapsular el resto de las propiedades del jugador, como su poder de ataque, su vida máxima, su vida actual y otras que estén definidas en la lógica actual
 * Los eventos en actions.js deben leer desde ese objeto definido en values.js
 * Considerar al momento de dibujar la animación del disparo, que el proyectil que se dibuje, será diferente según el tipo de personaje que se haya elegido. Para una primera versión esta animación debe ser un punto negro
+
+## Prompt 34:
+Ahora debemos dar el estilo final al juego, considerando que los heroes un arquero, un espadachin y un caballero, y los enemigos son dragones, vamos a hacer una temática de castillos, dragones y estilo medieval.
+* Utiliza la imagen de referencia para inspirarte en el diseño del juego
+* Considera que el castillo debe ir en la parte superior del tablero
+* Reemplazar visualmente, los cuadros por un camino que va hacia el jugador, logicamente siguen existiendo, solo deben ocultarse en la visualización
+* Considera que la fila anterior al jugador, debe ir un muro, que separa el camino de la zona del jugador
+* Rellenar el resto del tablero para que parezca un paramo
+* Realizar esto con css dentro de lo posible
+* En caso que haya que usar imagenes, generalas y agregalas dentro de la carpeta sprites
+* Aplica estos cambios durante la vista de juego
+* Determina una paleta de colores que haga sentido para ocupar en las otras ventanas de inicio, seleccion de personaje y muestra de puntaje, para que sea algo coerente con los cambios en el tablero de juego

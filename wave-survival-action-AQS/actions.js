@@ -79,14 +79,14 @@ function initTablero() {
     tablero.innerHTML = '';
 
     // Generar las celdas del tablero
-    for (let fila = 0; fila < 15; fila++) {
-        for (let columna = 0; columna < 5; columna++) {
+    for (let fila = 0; fila < TABLERO.filas; fila++) {
+        for (let columna = 0; columna < TABLERO.columnas; columna++) {
             const celda = document.createElement('div');
             celda.id = `celda-${fila}-${columna}`;
             celda.className = 'celda';
             celda.style.border = '1px solid #ccc';
-            celda.style.width = '40px';
-            celda.style.height = '40px';
+            celda.style.width = TABLERO.anchoCelda + 'px';
+            celda.style.height = TABLERO.altoCelda + 'px';
             tablero.appendChild(celda);
         }
     }
@@ -100,7 +100,7 @@ function initTablero() {
 
 // Función para mover al jugador
 function moverJugador(direccion) {
-    const maxColumnas = 4;
+    const maxColumnas = TABLERO.columnas - 1;
     const minColumnas = 0;
     // Limpiar la celda actual del jugador
     const celdaActual = document.getElementById(`celda-${jugadorFila}-${jugadorColumna}`);
@@ -212,7 +212,7 @@ function generarBuffs() {
     let cantidadBuffs = Math.floor(Math.random() * 3); // 0, 1 o 2
     let intentos = 0;
     while (nuevosBuffs.length < cantidadBuffs && intentos < 10) {
-        const columna = Math.floor(Math.random() * 5);
+        const columna = Math.floor(Math.random() * TABLERO.columnas);
         if (!columnasUsadas.includes(columna)) {
             // Solo agregar si no hay enemigo en fila 0 y esa columna
             if (!enemigos.some(e => e.fila === 0 && e.columna === columna)) {
@@ -230,9 +230,9 @@ function generarBuffs() {
 function generarOleada(oleadaNumero) {
     enemigos = [];
     // buffs no se reinician
-    if (oleadaNumero % 10 === 0) {
+    if (oleadaNumero % TABLERO.oleadaJefe === 0) {
         // Oleada de jefe
-        const cantidadJefes = Math.floor(oleadaNumero / 10);
+        const cantidadJefes = Math.floor(oleadaNumero / TABLERO.oleadaJefe);
         let columnasDisponibles = [0,1,2,3,4];
         for (let i = 0; i < cantidadJefes; i++) {
             let columna;
@@ -240,7 +240,7 @@ function generarOleada(oleadaNumero) {
                 const idx = Math.floor(Math.random() * columnasDisponibles.length);
                 columna = columnasDisponibles.splice(idx, 1)[0];
             } else {
-                columna = Math.floor(Math.random() * 5);
+                columna = Math.floor(Math.random() * TABLERO.columnas);
             }
             const jefeData = ENEMIGOS.find(e => e.tipo === 'jefe');
             enemigos.push({
@@ -272,15 +272,31 @@ function generarOleada(oleadaNumero) {
 
 // Renderizar tablero con enemigos y buffs
 function renderTablero() {
-    // Limpiar tablero
-    for (let fila = 0; fila < 15; fila++) {
-        for (let columna = 0; columna < 5; columna++) {
+    // Limpiar tablero y aplicar clases visuales medievales
+    for (let fila = 0; fila < TABLERO.filas; fila++) {
+        for (let columna = 0; columna < TABLERO.columnas; columna++) {
             const celda = document.getElementById(`celda-${fila}-${columna}`);
             celda.className = 'celda';
             celda.style.backgroundColor = '';
             celda.textContent = '';
             celda.style.backgroundImage = '';
             celda.style.backgroundPosition = '';
+            // Camino central más ancho (columnas 1,2,3)
+            if (columna >= 1 && columna <= 3) {
+                celda.classList.add('camino');
+            } else {
+                celda.classList.add('paramo');
+            }
+            // Muro en la fila anterior al jugador (toda la fila)
+            if (fila === jugadorFila - 1) {
+                celda.classList.remove('camino', 'paramo');
+                celda.classList.add('muro');
+            }
+            // Fila 0: castillo (toda la fila)
+            if (fila === 0) {
+                celda.classList.remove('camino', 'paramo', 'muro');
+                celda.classList.add('castillo');
+            }
         }
     }
     // Dibujar buffs con sprite, animación y texto
@@ -336,8 +352,8 @@ function renderTablero() {
             spriteDiv.style.width = (e.ancho || 48) + 'px';
             spriteDiv.style.height = (e.alto || 48) + 'px';
             spriteDiv.style.backgroundSize = `${e.ancho || 48}px ${e.alto || 48}px`;
-            if (e.color) celda.style.backgroundColor = e.color;
-            else celda.style.backgroundColor = '';
+            // No aplicar color de fondo a la celda de enemigos
+            celda.style.backgroundColor = '';
             celda.appendChild(spriteDiv);
         }
     });
@@ -401,13 +417,13 @@ function tickJuego() {
     }
     // Mover enemigos
     enemigos.forEach(e => {
-        // Si el enemigo tiene rango_fila, baja hasta ese valor, si no hasta 13
-        const limite = (typeof e.rango_fila === 'number') ? e.rango_fila : 13;
+        // Si el enemigo tiene rango_fila, baja hasta ese valor, si no hasta la penúltima fila
+        const limite = (typeof e.rango_fila === 'number') ? e.rango_fila : (TABLERO.filas - 2);
         if (e.fila < limite) e.fila++;
     });
     // Mover buffs (hasta fila 14, SIEMPRE bajan aunque haya enemigo)
     buffs.forEach(b => {
-        if (b.fila < 14) {
+        if (b.fila < TABLERO.filas - 1) {
             b.fila++;
         }
     });
@@ -420,7 +436,7 @@ function tickJuego() {
             return false;
         }
         // Eliminar buff si llegó a la fila inferior y el jugador no lo recogió
-        if (b.fila >= 14) {
+        if (b.fila >= TABLERO.filas - 1) {
             return false;
         }
         return true;
@@ -439,7 +455,7 @@ function tickJuego() {
         reproducirSonidoAtaqueEnemigo();
     }
     // Eliminar buffs fuera del tablero
-    buffs = buffs.filter(b => b.fila < 15);
+    buffs = buffs.filter(b => b.fila < TABLERO.filas);
     // Actualizar UI
     actualizarUI();
     renderTablero();
@@ -453,7 +469,7 @@ function tickJuego() {
     }
     if (enemigos.length === 0) {
         // Si fue una oleada de jefe, aumentar velocidad
-        if (JUGADOR.oleada % 10 === 0) {
+        if (JUGADOR.oleada % TABLERO.oleadaJefe === 0) {
             velocidadTick = Math.max(velocidadTick - 50, 100); // No menos de 100ms
             iniciarIntervaloJuego();
         }
@@ -597,7 +613,7 @@ window.addEventListener('keydown', (event) => {
 function animarDisparo(filaInicio, colInicio, filaFin, colFin) {
     const tablero = document.getElementById('tablero');
     if (!tablero) return;
-    // Calcular posición de inicio y fin RELATIVAS al tablero
+    // Calcular posición de inicio y fin RELATIVAS al tablero (ajustando offset del grid)
     const celdaInicio = document.getElementById(`celda-${filaInicio}-${colInicio}`);
     const celdaFin = document.getElementById(`celda-${filaFin}-${colFin}`);
     if (!celdaInicio || !celdaFin) return;
@@ -609,13 +625,15 @@ function animarDisparo(filaInicio, colInicio, filaFin, colFin) {
     proyectil.style.height = '10px';
     proyectil.style.borderRadius = '50%';
     proyectil.style.background = 'black';
-    proyectil.style.zIndex = 10;
+    proyectil.style.zIndex = 100;
+    // Obtener offset del tablero para compensar el desplazamiento del grid
+    const rectTablero = tablero.getBoundingClientRect();
     const rectInicio = celdaInicio.getBoundingClientRect();
     const rectFin = celdaFin.getBoundingClientRect();
-    const leftInicio = rectInicio.left  + rectInicio.width/2 - 5;
-    const topInicio = rectInicio.top  + rectInicio.height/2 - 5;
-    const leftFin = rectFin.left  + rectFin.width/2 - 5;
-    const topFin = rectFin.top + rectFin.height/2 - 5;
+    const leftInicio = rectInicio.left - rectTablero.left + rectInicio.width/2 - 5;
+    const topInicio = rectInicio.top - rectTablero.top + rectInicio.height/2 - 5;
+    const leftFin = rectFin.left - rectTablero.left + rectFin.width/2 - 5;
+    const topFin = rectFin.top - rectTablero.top + rectFin.height/2 - 5;
     proyectil.style.left = leftInicio + 'px';
     proyectil.style.top = topInicio + 'px';
     tablero.appendChild(proyectil);
